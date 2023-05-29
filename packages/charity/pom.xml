@@ -56,23 +56,16 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+<!--        https://stackoverflow.com/questions/74571191/use-keycloak-spring-adapter-with-spring-boot-3 -->
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
+            <groupId>com.c4-soft.springaddons</groupId>
+            <!-- replace "webmvc" with "weblux" if your app is reactive -->
+            <!-- replace "jwt" with "introspecting" to use token introspection instead of JWT decoding -->
+            <artifactId>spring-addons-webmvc-jwt-resource-server</artifactId>
+            <!-- this version is to be used with spring-boot 3.1.0, use 5.4.x for spring-boot 2.6.x or before -->
+            <version>6.1.11</version>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.keycloak.bom</groupId>
-                <artifactId>keycloak-adapter-bom</artifactId>
-                <version>21.1.1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
         <plugins>
             <plugin>

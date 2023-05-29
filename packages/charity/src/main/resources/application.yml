@@ -1,0 +1,29 @@
+server:
+  port: 8081
+
+
+com:
+  c4-soft:
+    springaddons:
+      security:
+        cors:
+          - path: /**
+            allowed-origins: ${CORS_ORIGIN:}
+        issuers:
+          - location: ${KEYCLOAK_URL:}
+            username-claim: preferred_username
+            authorities:
+              - path: $.realm_access.roles
+              - path: $.resource_access.*.roles
+        permit-all:
+          - "/public**"
+          - "/api/v1/public*"
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mariadb://${DB_HOST:}:${DB_PORT:}/${DB_DATABASE:}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.mariadb.jdbc.Driver
