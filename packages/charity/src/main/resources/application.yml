@@ -15,6 +15,7 @@ com:
             authorities:
               - path: $.realm_access.roles
               - path: $.resource_access.*.roles
+                prefix: ROLE_
         permit-all:
           - "/public**"
           - "/api/v1/public*"

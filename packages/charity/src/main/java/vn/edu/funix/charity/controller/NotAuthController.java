@@ -1,11 +1,13 @@
 package vn.edu.funix.charity.controller;
 
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.edu.funix.charity.security.Role;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/public")
 public class NotAuthController {
     @GetMapping
+    @Secured(Role.NO_USER)
     public Map<String, Object> abc() {
         Map<String, Object> a = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

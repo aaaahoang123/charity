@@ -11,7 +11,10 @@ import vn.edu.funix.charity.security.annotation.UsernameResolver;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity
+@EnableMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
