@@ -1,5 +1,5 @@
 'use client'
-import { useSession } from "next-auth/react"
+import { useSession, signOut, signIn } from "next-auth/react"
 
 export default function Page() {
     const { data: session, status, update } = useSession()
@@ -16,12 +16,11 @@ export default function Page() {
           * Only trigger a session update, assuming you already updated the value server-side.
           * All `useSession().data` references will be updated.
           */}
-                <button onClick={() => update()}>
-                    Edit name
-                </button>
+                <button onClick={() => signOut()}>Out</button>
             </>
         )
     }
 
-    return <a href="/api/auth/signin">Sign in</a>
+    return <button onClick={() => signIn('keycloak')}>Signin</button>
+    // return <a href="/api/auth/signin">Sign in</a>
 }

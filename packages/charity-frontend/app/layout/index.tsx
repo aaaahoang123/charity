@@ -1,10 +1,7 @@
-import './globals.css'
+import '../globals.scss'
 import {Inter} from 'next/font/google'
-import {Button, ConfigProvider} from "antd";
-import InnerLayout from "@/app/inner-layout";
+import InnerLayout from "@/app/layout/inner-layout";
 import {getServerSession} from "next-auth";
-import {GetServerSidePropsContext} from "next";
-import {SessionProvider} from "next-auth/react";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 
 const inter = Inter({subsets: ['latin']})

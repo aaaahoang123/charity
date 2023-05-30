@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    margin: 0;
+}
+
+.blur-shadow {
+    box-shadow: 0 8px 24px -2px rgba(0,0,0,.05);
+}
+
 /*:root {*/
 /*  --foreground-rgb: 0, 0, 0;*/
 /*  --background-start-rgb: 214, 219, 220;*/
