@@ -48,6 +48,7 @@ services:
       - KC_HOSTNAME=${KEYCLOAK_HOSTNAME}
       - KC_HEALTH_ENABLED=true
       - KC_METRICS_ENABLED=true
+      - KC_ENV=${KEYCLOAK_ENV}
     depends_on:
       - mariadb
     networks:
