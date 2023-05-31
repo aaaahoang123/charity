@@ -65,6 +65,11 @@
             <!-- this version is to be used with spring-boot 3.1.0, use 5.4.x for spring-boot 2.6.x or before -->
             <version>6.1.11</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

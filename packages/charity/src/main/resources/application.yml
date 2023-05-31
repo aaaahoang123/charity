@@ -23,6 +23,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
   datasource:
     url: jdbc:mariadb://${DB_HOST:}:${DB_PORT:}/${DB_DATABASE:}
     username: ${DB_USERNAME:}
