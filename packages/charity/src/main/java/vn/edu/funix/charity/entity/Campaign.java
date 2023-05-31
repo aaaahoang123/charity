@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "campaigns")
 @Where(clause = "deleted_at is null")
-@SQLDelete(sql = "UPDATE campaigns SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE campaigns SET deletedAt = now() WHERE id = ?")
 public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class Campaign {
     private LocalDate deadline;
 
     @Column(nullable = false)
-    private Long targetMoney;
+    private Long targetAmount;
 
     @Column(length = 2048)
     private String images;

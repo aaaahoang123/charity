@@ -7,7 +7,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import vn.edu.funix.charity.entity.enumerate.TransactionSource;
+import vn.edu.funix.charity.entity.enumerate.TransactionProvider;
 import vn.edu.funix.charity.entity.enumerate.DonationStatus;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "donations")
 @Where(clause = "deleted_at is null")
-@SQLDelete(sql = "UPDATE donations SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE donations SET deletedAt = now() WHERE id = ?")
 public class Donation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class Donation {
     private String transactionCode;
 
     @Enumerated(EnumType.STRING)
-    private TransactionSource transactionSource;
+    private TransactionProvider transactionProvider;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
