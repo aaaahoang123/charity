@@ -1,28 +1,32 @@
 package vn.edu.funix.charity.controller;
 
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.edu.funix.charity.entity.Campaign;
+import vn.edu.funix.charity.repository.CampaignRepository;
 import vn.edu.funix.charity.security.Role;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/public")
+@AllArgsConstructor
 public class NotAuthController {
+    private CampaignRepository campaignRepository;
+
     @GetMapping
     @Secured(Role.NO_USER)
-    public Map<String, Object> abc() {
-        Map<String, Object> a = new HashMap<>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        a.put("needAuth", false);
-        a.put("auth", authentication);
-        return a;
+    public List<Campaign> abc() {
+        List<Campaign> campaigns = campaignRepository.findAll();
+        return campaigns;
     }
 
     @GetMapping("/test-path")
