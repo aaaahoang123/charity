@@ -7,6 +7,8 @@ networks:
 volumes:
   mariadb:
     driver: ${VOLUMES_DRIVER}
+  keycloak:
+    driver: ${VOLUMES_DRIVER}
 
 services:
   mariadb:
@@ -38,6 +40,8 @@ services:
         - KEYCLOAK_VERSION=${KEYCLOAK_VERSION}
     ports:
       - "${KEYCLOAK_PORT}:8080"
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes
     environment:
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
