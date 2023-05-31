@@ -1,4 +1,4 @@
-package vn.edu.funix.charity.security.annotation;
+package vn.edu.funix.charity.common.security.annotation;
 
 import java.lang.annotation.*;
 

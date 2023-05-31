@@ -15,6 +15,9 @@
     <description>charity</description>
     <properties>
         <java.version>17</java.version>
+        <springaddons.version>6.1.11</springaddons.version>
+        <app-type>webmvc</app-type><!-- alternative value is webflux !-->
+        <token>jwt</token><!-- alternative value is introspecting !-->
     </properties>
     <dependencies>
         <dependency>
@@ -59,31 +62,63 @@
 <!--        https://stackoverflow.com/questions/74571191/use-keycloak-spring-adapter-with-spring-boot-3 -->
         <dependency>
             <groupId>com.c4-soft.springaddons</groupId>
-            <!-- replace "webmvc" with "weblux" if your app is reactive -->
-            <!-- replace "jwt" with "introspecting" to use token introspection instead of JWT decoding -->
-            <artifactId>spring-addons-webmvc-jwt-resource-server</artifactId>
-            <!-- this version is to be used with spring-boot 3.1.0, use 5.4.x for spring-boot 2.6.x or before -->
-            <version>6.1.11</version>
+            <artifactId>spring-addons-${app-type}-${token}-resource-server</artifactId>
+            <version>${springaddons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.c4-soft.springaddons</groupId>
+            <artifactId>spring-addons-${app-type}-${token}-test</artifactId>
+            <version>${springaddons.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5-jakarta</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+        </dependency>
+
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>spring-cloud-gcp-dependencies</artifactId>
+                <version>4.3.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

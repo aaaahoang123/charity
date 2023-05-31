@@ -1,13 +1,12 @@
 package vn.edu.funix.charity.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 
 import java.time.LocalDate;
@@ -55,14 +54,25 @@ public class Campaign {
     @Enumerated(EnumType.ORDINAL)
     private CampaignStatus status;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(columnDefinition = "timestamp", updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(columnDefinition = "timestamp")
     private LocalDateTime updatedAt;
 
     @Column(columnDefinition = "timestamp")
     private LocalDateTime deletedAt;
+
+    @Column(nullable = false, updatable = false)
+    private String createdByUserId;
+
+    @Column(nullable = false)
+    private String lastUpdatedByUserId;
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+        organizationId = organization.getId();
+    }
 }

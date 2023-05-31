@@ -3,12 +3,12 @@ package vn.edu.funix.charity.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import vn.edu.funix.charity.entity.enumerate.TransactionProvider;
 import vn.edu.funix.charity.entity.enumerate.DonationStatus;
+import vn.edu.funix.charity.entity.enumerate.TransactionProvider;
 
 import java.time.LocalDateTime;
 
@@ -45,11 +45,11 @@ public class Donation {
     @JoinColumn(name = "donor_id", referencedColumnName = "id")
     private Donor donor;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(columnDefinition = "timestamp", updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(columnDefinition = "timestamp")
     private LocalDateTime updatedAt;
 

@@ -3,10 +3,10 @@ package vn.edu.funix.charity.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -28,11 +28,11 @@ public class Donor {
 
     private String email;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(columnDefinition = "timestamp", updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(columnDefinition = "timestamp")
     private LocalDateTime updatedAt;
 

@@ -3,14 +3,12 @@ package vn.edu.funix.charity.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.funix.charity.entity.Campaign;
-import vn.edu.funix.charity.repository.CampaignRepository;
-import vn.edu.funix.charity.security.Role;
+import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
+import vn.edu.funix.charity.common.security.Role;
 
 import java.util.HashMap;
 import java.util.List;
