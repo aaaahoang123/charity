@@ -1,4 +1,4 @@
-package vn.edu.funix.charity.security.annotation;
+package vn.edu.funix.charity.common.security.annotation;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;

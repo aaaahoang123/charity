@@ -1,6 +1,16 @@
 server:
-  port: ${PORT}
+  port: ${PORT:8080}
 
+vn:
+  edu:
+    fu:
+      app:
+        debug: ${APP_DEBUG:false}
+      storage:
+        gcs-key-file-path: ${GCS_KEY_FILE:gc.json}
+        gcs-bucket: ${GCS_BUCKET}
+        gcs-path-prefix: ${GCS_PATH_PREFIX}
+        uri: ${GCS_URI}
 
 com:
   c4-soft:
@@ -10,7 +20,7 @@ com:
           - path: /**
             allowed-origins: ${CORS_ORIGIN:}
         issuers:
-          - location: ${KEYCLOAK_URL:}
+          - location: ${KEYCLOAK_URL:http://localhost:8081}
             username-claim: preferred_username
             authorities:
               - path: $.realm_access.roles
@@ -23,9 +33,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: ${DB_SHOW_SQL:false}
   datasource:
-    url: jdbc:mariadb://${DB_HOST:}:${DB_PORT:}/${DB_DATABASE:}
-    username: ${DB_USERNAME:}
-    password: ${DB_PASSWORD:}
+    url: jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_DATABASE:default}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
     driver-class-name: org.mariadb.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
