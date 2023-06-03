@@ -8,14 +8,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import vn.edu.funix.charity.config.StorageConfiguration;
 
 import java.io.IOException;
 
 @Service
 @AllArgsConstructor
-public class StorageServiceImpl implements StorageService {
-    private final StorageConfiguration configuration;
+public class GcsStorageService implements StorageService {
+    private final GcsStorageConfiguration configuration;
     private final Storage storage;
     private final StorageHelper storageHelper;
     @Override
@@ -54,6 +53,6 @@ public class StorageServiceImpl implements StorageService {
         if (!configuration.getGcsPathPrefix().isEmpty()) {
             filePath = configuration.getGcsPathPrefix() + "/" + filePath;
         }
-        return configuration.getUri() + "/" + filePath;
+        return configuration.getGcsUri() + "/" + filePath;
     }
 }

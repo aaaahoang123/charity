@@ -10,7 +10,7 @@ vn:
         gcs-key-file-path: ${GCS_KEY_FILE:gc.json}
         gcs-bucket: ${GCS_BUCKET}
         gcs-path-prefix: ${GCS_PATH_PREFIX}
-        uri: ${GCS_URI}
+        gcs-uri: ${GCS_URI}
 
 com:
   c4-soft:
