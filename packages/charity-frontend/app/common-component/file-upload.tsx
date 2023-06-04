@@ -5,6 +5,7 @@ import {UploadOutlined} from "@ant-design/icons";
 import {forwardRef, useCallback, useEffect, useState} from "react";
 import {UploadChangeParam, UploadFile} from "antd/es/upload/interface";
 import {useSession} from "next-auth/react";
+import {API_URL} from "@/app/core/constant";
 
 export interface FileUpLoadProps extends Omit<UploadProps, 'onChange' | 'action'> {
     value?: string[];
@@ -52,7 +53,7 @@ const FileUpload = forwardRef(function FileUpload({
     return (
         <Upload
             ref={ref}
-            action={process.env.NEXT_PUBLIC_API_URL + `/api/v1/storage`}
+            action={API_URL + `/api/v1/storage`}
             listType="picture"
             fileList={fileList}
             onChange={onUpload}

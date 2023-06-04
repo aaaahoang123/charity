@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import validateMessages from './validateMessage.json';
+import {ClientServiceProvider} from "@/app/core/http-service";
 
 const { Header, Content, Footer } = Layout;
 
@@ -36,19 +37,21 @@ export default function InnerLayout({children, session}: any) {
                     requiredMark: true,
                 }}
             >
-                <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
-                    <Header className={'blur-shadow flex items-center'}>
-                        <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
-                            <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} />
-                        </Link>
-                        <MainMenu />
-                    </Header>
-                    <Content style={{ padding: ('0 ' + controlHeightLG * 1.25 + 'px') }}>
-                        <div style={{ marginTop: controlHeightLG * 1.25 }}>
-                            {children}
-                        </div>
-                    </Content>
-                </Layout>
+                <ClientServiceProvider>
+                    <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
+                        <Header className={'blur-shadow flex items-center'}>
+                            <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
+                                <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} />
+                            </Link>
+                            <MainMenu />
+                        </Header>
+                        <Content style={{ padding: ('0 ' + controlHeightLG * 1.25 + 'px') }}>
+                            <div style={{ marginTop: controlHeightLG * 1.25 }}>
+                                {children}
+                            </div>
+                        </Content>
+                    </Layout>
+                </ClientServiceProvider>
             </ConfigProvider>
         </SessionProvider>
     )

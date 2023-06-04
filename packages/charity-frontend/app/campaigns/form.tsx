@@ -18,6 +18,7 @@ import 'easymde/dist/easymde.min.css';
 import FileUpload from "@/app/common-component/file-upload";
 import {useCallback} from "react";
 import dynamic from 'next/dynamic';
+import OrganizationSelector from "@/app/campaigns/OrganizationSelector";
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
@@ -95,12 +96,10 @@ const CampaignForm = () => {
                         >
                             <SimpleMDE  />
                         </Form.Item>
-                    </Col>
 
-                    <Col xs={24} lg={12}>
                         <h2>Tổ chức/Cá nhân quyên góp</h2>
                         <Form.Item label="Tổ chức" name="organizationId">
-                            <Input placeholder={'Chọn cá nhân/tổ chức'} />
+                            <OrganizationSelector />
                         </Form.Item>
                         <Form.Item label="Tổ chức" name="organizationName">
                             <Input placeholder={'Tên cá nhân/Tổ chức'} />
@@ -111,7 +110,7 @@ const CampaignForm = () => {
                         <Form.Item label="Email"
                                    name={'organizationEmail'}
                                    rules={[{type: 'email'}
-                        ]}>
+                                   ]}>
                             <Input placeholder={'Email'}/>
                         </Form.Item>
                         <Form.Item label="Avatar" name={'organizationAvatar'}>
@@ -147,6 +146,10 @@ const CampaignForm = () => {
                         <Form.Item label="Button">
                             <Button>Button</Button>
                         </Form.Item>
+                    </Col>
+
+                    <Col xs={24} lg={12}>
+
                     </Col>
                 </Row>
             </Form>
