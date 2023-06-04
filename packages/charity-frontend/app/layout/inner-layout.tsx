@@ -4,6 +4,9 @@ import {ConfigProvider, Layout, theme} from "antd";
 import {SessionProvider} from "next-auth/react";
 import MainMenu from "@/app/layout/Menu";
 import {useEffect, useState} from "react";
+import Image from "next/image";
+import Link from "next/link";
+import validateMessages from './validateMessage.json';
 
 const { Header, Content, Footer } = Layout;
 
@@ -28,14 +31,22 @@ export default function InnerLayout({children, session}: any) {
                         },
                     }
                 }}
+                form={{
+                    validateMessages,
+                    requiredMark: true,
+                }}
             >
                 <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
-                    <Header className={'blur-shadow'}>
-                        <div className={'logo'} />
+                    <Header className={'blur-shadow flex items-center'}>
+                        <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
+                            <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} />
+                        </Link>
                         <MainMenu />
                     </Header>
                     <Content style={{ padding: ('0 ' + controlHeightLG * 1.25 + 'px') }}>
-                        {children}
+                        <div style={{ marginTop: controlHeightLG * 1.25 }}>
+                            {children}
+                        </div>
                     </Content>
                 </Layout>
             </ConfigProvider>
