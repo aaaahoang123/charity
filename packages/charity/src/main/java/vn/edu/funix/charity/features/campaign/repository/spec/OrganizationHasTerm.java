@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import vn.edu.funix.charity.entity.Organization;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class OrganizationHasTerm implements Specification<Organization> {
                 criteriaBuilder.like(root.get("phoneNumber"), likeTerm),
                 criteriaBuilder.like(root.get("email"), likeTerm)
         );
+
+        predicates = new ArrayList<>(predicates);
 
         try {
             int numberValue = Integer.parseInt(term);

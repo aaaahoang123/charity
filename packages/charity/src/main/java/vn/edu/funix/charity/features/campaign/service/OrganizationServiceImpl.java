@@ -18,7 +18,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Specification<Organization> specification = Specification.where(null);
 
         if (term != null) {
-            specification.and(new OrganizationHasTerm(term));
+            specification = specification.and(new OrganizationHasTerm(term));
         }
         return organizationRepository.findAll(specification, pageable);
     }
