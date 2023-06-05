@@ -19,6 +19,7 @@ import Organization from "@/app/core/model/organization";
 import {FormItemProps} from "antd/es/form/FormItem";
 import ReactMarkdown from 'react-markdown';
 import MarkDownEditor from "@/app/common/component/MarkDownEditor";
+import {ReloadOutlined, SendOutlined} from "@ant-design/icons";
 
 const CampaignForm = () => {
     const [form] = Form.useForm();
@@ -36,22 +37,21 @@ const CampaignForm = () => {
     }, [form]);
 
     return (
-        <Card>
-            <Form
-                labelCol={{span: 4}}
-                wrapperCol={{span: 14}}
-                layout="horizontal"
-                initialValues={{size: 'small'}}
-                // onValuesChange={onFormLayoutChange}
-                size={'small'}
-                onFinish={onFinish}
-                form={form}
-                // style={{ maxWidth: 600 }}
-            >
-                <Row gutter={8}>
-                    <Col xs={24} lg={12}>
-                        <h2>Thông tin đợt quyên góp</h2>
 
+        <Form
+            labelCol={{span: 4}}
+            wrapperCol={{span: 14}}
+            layout="horizontal"
+            initialValues={{size: 'small'}}
+            // onValuesChange={onFormLayoutChange}
+            size={'small'}
+            onFinish={onFinish}
+            form={form}
+            // style={{ maxWidth: 600 }}
+        >
+            <Row gutter={8}>
+                <Col xs={24} lg={12}>
+                    <Card title={'Thông tin quyên góp'}>
                         <Form.Item label="Tiêu đề"
                                    name="title"
                                    rules={[{required: true}, {max: 255, type: 'string'}]}
@@ -101,10 +101,13 @@ const CampaignForm = () => {
                                    ]}
                                    name={'content'}
                         >
-                            <MarkDownEditor />
+                            <MarkDownEditor/>
                         </Form.Item>
+                    </Card>
+                </Col>
 
-                        <h2>Tổ chức/Cá nhân quyên góp</h2>
+                <Col xs={24} lg={12}>
+                    <Card title={'Tổ chức/Cá nhân quyên góp'}>
                         <Form.Item label="Tổ chức" name="organizationId">
                             <OrganizationSelector onSelectObject={onSelectOrganization}/>
                         </Form.Item>
@@ -148,13 +151,8 @@ const CampaignForm = () => {
                                 )
                             }}
                         </Form.Item>
-
-                        <Form.Item label="Button">
-                            <Button htmlType={'submit'}>Button</Button>
-                        </Form.Item>
-                    </Col>
-
-                    <Col xs={24} lg={12}>
+                    </Card>
+                    <Card className={'mt-2'} title={'Xem trước nội dung'}>
                         <Form.Item noStyle={true}
                                    shouldUpdate={(oldValue, newValue) => oldValue.content !== newValue.content}>
                             {form => (
@@ -163,11 +161,34 @@ const CampaignForm = () => {
                                 </ReactMarkdown>
                             )}
                         </Form.Item>
-                    </Col>
-                </Row>
-            </Form>
+                    </Card>
 
-        </Card>
+                    <Row gutter={8} className={'mt-2'}>
+                        <Col span={12}>
+                            <Form.Item noStyle>
+                                <Button htmlType={'submit'}
+                                        className={'w-full'}
+                                        type={'primary'}
+                                        icon={<SendOutlined />}
+                                >
+                                    Submit
+                                </Button>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Button htmlType={'reset'}
+                                    className={'w-full'}
+                                    type={'dashed'}
+                                    icon={<ReloadOutlined />}
+                            >
+                                Reset
+                            </Button>
+                        </Col>
+                    </Row>
+
+                </Col>
+            </Row>
+        </Form>
     )
 };
 

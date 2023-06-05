@@ -71,7 +71,6 @@ const useMenuItems = () => {
     const user = data?.user;
     const access = (data as any)?.resource_access;
     const issuer = (data as any)?.issuer;
-    console.log(data);
     return useMemo(() => {
         const result = [...items];
         if (status === 'loading') return result;

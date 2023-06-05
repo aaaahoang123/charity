@@ -15,7 +15,6 @@ import {JWT} from "next-auth/jwt";
  */
 const refreshAccessToken = async (token: JWT) => {
     try {
-        console.log({token, now: Date.now().valueOf(), exp: (token as any).refreshTokenExpired, isExp: Date.now() > (token as any).refreshTokenExpired});
         if (Date.now() > (token as any).refreshTokenExpired) throw new Error('Token expired');
         const details = {
             client_id: process.env.KEYCLOAK_CLIENT,
@@ -43,13 +42,14 @@ const refreshAccessToken = async (token: JWT) => {
         return {
             ...token,
             accessToken: refreshedTokens.access_token,
-            accessTokenExpired: Date.now() + (refreshedTokens.expires_in - 15) * 1000,
+            accessTokenExpired: Date.now() + (refreshedTokens.expires_in - 20) * 1000,
             refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
             refreshTokenExpired:
-                Date.now() + (refreshedTokens.refresh_expires_in - 15) * 1000,
+                Date.now() + (refreshedTokens.refresh_expires_in - 20) * 1000,
             idToken: refreshedTokens.id_token,
         };
     } catch (error) {
+        console.log("Error refresh token: ", error);
         return {
             ...token,
             error: 'RefreshAccessTokenError',
@@ -82,19 +82,19 @@ export const authOptions: AuthOptions = {
                 };
                 (session as any).issuer = de.iss;
             }
-
+            console.log(session);
             return session;
         },
-        jwt({token, user, account, profile, isNewUser}) {
+        async jwt({token, user, account, profile, isNewUser}) {
             // Initial sign in
             if (account && user) {
                 // Add access_token, refresh_token and expirations to the token right after signin
                 token.accessToken = account.access_token;
                 token.refreshToken = account.refresh_token;
                 token.accessTokenExpired =
-                    (account?.expires_at ?? 0 - 15) * 1000;
+                    ((account?.expires_at ?? 0) - 20) * 1000;
                 token.refreshTokenExpired =
-                    Date.now() + ((account as any).refresh_expires_in - 15) * 1000;
+                    Date.now() + ((account as any).refresh_expires_in - 20) * 1000;
                 token.user = user;
                 token.idToken = account.id_token;
                 return token;

@@ -4,7 +4,7 @@ import {memo, useMemo} from "react";
 import {SimpleMDEReactProps} from "react-simplemde-editor/src/SimpleMdeReact";
 import dynamic from "next/dynamic";
 import {useAxios} from "@/app/core/http-service";
-import Rest from "@/app/core/model/Rest";
+import Rest from "@/app/core/model/rest";
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {ssr: false});
 

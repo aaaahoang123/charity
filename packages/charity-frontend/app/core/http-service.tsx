@@ -2,7 +2,7 @@ import Axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {API_URL} from "@/app/core/constant";
 import {createContext, memo, PropsWithChildren, useCallback, useContext, useMemo, useRef} from "react";
 import {useSession} from "next-auth/react";
-import Rest from "@/app/core/model/Rest";
+import Rest from "@/app/core/model/rest";
 
 export type Type<T> = new (_: AxiosInstance) => T;
 

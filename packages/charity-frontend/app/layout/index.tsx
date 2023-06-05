@@ -12,11 +12,10 @@ export const metadata = {
 }
 
 export default async function RootLayout({children, params}: any) {
-    const session = await getServerSession(authOptions);
     return (
         <html lang="en">
         <body className={inter.className}>
-            <InnerLayout params={params} session={session}>{children}</InnerLayout>
+            <InnerLayout params={params}>{children}</InnerLayout>
         </body>
         </html>
     )
