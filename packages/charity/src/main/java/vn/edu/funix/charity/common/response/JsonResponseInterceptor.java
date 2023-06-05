@@ -117,7 +117,7 @@ public class JsonResponseInterceptor implements ResponseBodyAdvice<Object> {
 
         meta.put("total", page.getTotalElements());
         meta.put("currentPage", page.getPageable().getPageNumber());
-        meta.put("lastPage", page.getTotalPages() - 1);
+        meta.put("lastPage", page.getTotalPages());
         meta.put("size", page.getSize());
 
         result.put("meta", meta);

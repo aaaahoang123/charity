@@ -18,7 +18,7 @@ public class OrganizationController {
 
     @GetMapping
     public Page<Organization> search(
-            @RequestParam("term") String term,
+            @RequestParam(value = "term", required = false) String term,
             Pageable pageable
     ) {
         return organizationService.search(term, pageable);

@@ -1,7 +1,7 @@
 'use client'
 
 import {ConfigProvider, Layout, theme} from "antd";
-import {SessionProvider} from "next-auth/react";
+import {SessionProvider, signIn} from "next-auth/react";
 import MainMenu from "@/app/layout/Menu";
 import {useEffect, useState} from "react";
 import Image from "next/image";
@@ -15,8 +15,14 @@ export default function InnerLayout({children, session}: any) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
     const {
-        token: { colorBgContainer, controlHeightLG },
+        token: { controlHeightLG },
     } = theme.useToken();
+
+    useEffect(() => {
+        if (session?.error === 'RefreshAccessTokenError') {
+            signIn('keycloak');
+        }
+    }, [session]);
 
     return (
         <SessionProvider session={session}>

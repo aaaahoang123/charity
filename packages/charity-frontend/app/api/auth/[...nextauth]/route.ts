@@ -15,7 +15,8 @@ import {JWT} from "next-auth/jwt";
  */
 const refreshAccessToken = async (token: JWT) => {
     try {
-        // if (Date.now() > token.refreshTokenExpired) throw Error;
+        console.log({token, now: Date.now().valueOf(), exp: (token as any).refreshTokenExpired, isExp: Date.now() > (token as any).refreshTokenExpired});
+        if (Date.now() > (token as any).refreshTokenExpired) throw new Error('Token expired');
         const details = {
             client_id: process.env.KEYCLOAK_CLIENT,
             client_secret: process.env.KEYCLOAK_SECRET,
@@ -70,6 +71,9 @@ export const authOptions: AuthOptions = {
 
             (session.user as any).id = token.id;
             (session as any).accessToken = accessToken;
+            if (token.error) {
+                (session as any).error = token.error;
+            }
             if (accessToken) {
                 const de = decodeJwt(accessToken);
                 (session as any).resource_access = {
