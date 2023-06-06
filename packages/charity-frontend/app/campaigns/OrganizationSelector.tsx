@@ -2,7 +2,7 @@
 
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Avatar, Select, SelectProps, Spin} from "antd";
-import {useService} from "@/app/core/http-service";
+import {useService} from "@/app/core/http/components";
 import OrganizationService from "@/app/campaigns/organization-service";
 import debounce from 'lodash/debounce';
 import Organization from "@/app/core/model/organization";

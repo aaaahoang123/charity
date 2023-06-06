@@ -19,7 +19,7 @@ import {FormItemProps} from "antd/es/form/FormItem";
 import ReactMarkdown from 'react-markdown';
 import MarkDownEditor from "@/app/common/component/MarkDownEditor";
 import {ReloadOutlined, SendOutlined} from "@ant-design/icons";
-import {useService} from "@/app/core/http-service";
+import {useService} from "@/app/core/http/components";
 import CampaignService from "@/app/campaigns/campaign-service";
 import {useRouter} from "next/navigation";
 
@@ -37,7 +37,7 @@ const CampaignForm = () => {
             organizationAvatar: values.organizationAvatar?.join(','),
         };
         service.create(processedValues)
-            .then(response => {
+            .then(_ => {
                 message.success('Tạo đợt quyên góp thành công');
                 router.push('/');
             }).catch(e => {

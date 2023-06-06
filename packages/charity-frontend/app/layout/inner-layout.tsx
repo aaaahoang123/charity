@@ -7,7 +7,7 @@ import {PropsWithChildren, useEffect, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import validateMessages from './validateMessage.json';
-import {ClientServiceProvider} from "@/app/core/http-service";
+import {ClientServiceProvider} from "@/app/core/http/components";
 
 const { Header, Content, Footer } = Layout;
 

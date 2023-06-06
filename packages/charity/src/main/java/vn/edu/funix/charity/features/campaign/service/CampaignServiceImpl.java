@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.exception.BadRequestException;
+import vn.edu.funix.charity.common.specification.FetchRelation;
 import vn.edu.funix.charity.common.util.DateTimeUtils;
 import vn.edu.funix.charity.common.util.StringToSlug;
 import vn.edu.funix.charity.entity.Campaign;
@@ -26,6 +27,7 @@ import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasStatus;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasTerm;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -65,7 +67,7 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public Page<Campaign> list(ListCampaignParams params, Pageable pageable) {
-        Specification<Campaign> spec = Specification.where(null);
+        Specification<Campaign> spec = Specification.where(new FetchRelation<>("organization"));
 
         if (params.getStatus() != null) {
             spec = spec.and(new CampaignHasStatus(params.getStatus()));

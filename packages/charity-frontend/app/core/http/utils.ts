@@ -1,20 +1,16 @@
 import Axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {API_URL} from "@/app/core/constant";
-import {createContext, memo, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef} from "react";
-import {useSession} from "next-auth/react";
 import Rest from "@/app/core/model/rest";
 
-export type Type<T> = new (_: AxiosInstance) => T;
-
-let httpService: AxiosInstance;
-const getAxiosInstance = (token?: string) => {
-    if (httpService) {
+let components: AxiosInstance;
+export const getAxiosInstance = (token?: string) => {
+    if (components) {
         if (token) {
-            httpService.defaults.headers.common.Authorization = `Bearer ${token}`;
+            components.defaults.headers.common.Authorization = `Bearer ${token}`;
         } else {
-            delete httpService.defaults.headers.common.Authorization;
+            delete components.defaults.headers.common.Authorization;
         }
-        return httpService;
+        return components;
     }
     const headers = new AxiosHeaders({
         Accept: 'application/json',
@@ -22,7 +18,7 @@ const getAxiosInstance = (token?: string) => {
     if (token) {
         headers.set('Authorization', `Bearer ${token}`);
     }
-    return httpService = Axios.create({
+    return components = Axios.create({
         baseURL: API_URL,
         headers,
     });
@@ -107,65 +103,4 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
                 .then(({data}) => data)
         );
     }
-
-
-
 }
-
-export interface ClientServiceContext {
-    axios: AxiosInstance;
-    getService: <T, S extends CRUDService<T> = CRUDService<T>>(type: Type<S>) => S;
-}
-const clientServiceContext = createContext<ClientServiceContext>({} as any);
-
-export const ClientServiceProvider = memo(function ClientServiceProvider({children}: PropsWithChildren) {
-    const {data, status} = useSession();
-    const accessToken = (data as any)?.accessToken;
-    const axios = useMemo(() => {
-        return getAxiosInstance(accessToken);
-    }, [accessToken]);
-
-    const serviceRef = useRef<{[key: string]: CRUDService}>({});
-
-    useEffect(() => {
-        for (const [k, service] of Object.entries(serviceRef.current)) {
-            service.setStatus(status);
-        }
-    }, [status]);
-
-    useEffect(() => {
-        for (const [k, service] of Object.entries(serviceRef.current)) {
-            service.setClient(axios);
-        }
-    }, [axios]);
-
-    const getService = useCallback<ClientServiceContext['getService']>(<T, S extends CRUDService<T> = CRUDService<T>>(type: Type<S>): S => {
-        if (serviceRef.current[type.name]) {
-            const s = serviceRef.current[type.name];
-            return s as any;
-        }
-        const s = new type(axios);
-        s.setStatus(status);
-        serviceRef.current[type.name] = s;
-        return s;
-    }, [axios, status]);
-
-    return (
-        <clientServiceContext.Provider value={{
-            axios,
-            getService
-        }}>
-            {children}
-        </clientServiceContext.Provider>
-    );
-});
-
-export const useAxios = () => {
-    const contextValue = useContext(clientServiceContext);
-    return contextValue.axios;
-};
-
-export const useService = <T, S extends CRUDService<T>>(type: Type<S>): S => {
-    const contextValue = useContext(clientServiceContext);
-    return contextValue.getService(type);
-};

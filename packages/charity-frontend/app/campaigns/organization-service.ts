@@ -1,5 +1,5 @@
-import {BaseCRUDService} from "@/app/core/http-service";
 import Organization from "@/app/core/model/organization";
+import {BaseCRUDService} from "@/app/core/http/utils";
 
 class OrganizationService extends BaseCRUDService<Organization> {
     getApiPath(): string {
