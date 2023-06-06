@@ -1,6 +1,6 @@
 import Axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {API_URL} from "@/app/core/constant";
-import {createContext, memo, PropsWithChildren, useCallback, useContext, useMemo, useRef} from "react";
+import {createContext, memo, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef} from "react";
 import {useSession} from "next-auth/react";
 import Rest from "@/app/core/model/rest";
 
@@ -30,6 +30,7 @@ const getAxiosInstance = (token?: string) => {
 
 export interface CRUDService<T = any> {
     setClient(client: AxiosInstance): void;
+    setStatus(status: 'authenticated' | 'loading' | 'unauthenticated'): void;
     list(params: any): Promise<Rest<T[]>>;
     create(body: any): Promise<Rest<T>>;
     detail(id: string | number): Promise<Rest<T>>;
@@ -38,29 +39,62 @@ export interface CRUDService<T = any> {
 }
 
 export abstract class BaseCRUDService<T> implements CRUDService<T> {
+    protected _status: 'authenticated' | 'loading' | 'unauthenticated' = 'loading';
     constructor(protected axios: AxiosInstance) {
     }
 
+    public setStatus(status: 'authenticated' | 'loading' | 'unauthenticated') {
+        this._status = status;
+    }
+
     abstract getApiPath(): string;
+
+    /**
+     * Block the request until the service ready with sessions provided from backend
+     * @param fn
+     * @protected
+     */
+    protected waitForReady<T>(fn: () => Promise<T>): Promise<T> {
+        return new Promise((resolve, reject) => {
+            const checkValue = () => {
+                if (this._status !== 'loading') {
+                    fn().then(resolve).catch(reject);
+                } else {
+                    setTimeout(checkValue, 100);
+                }
+            };
+
+            checkValue();
+        });
+    }
+
     create(body: any): Promise<Rest<T>> {
-        return this.axios.post<Rest<T>>(this.getApiPath(), body)
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.axios.post<Rest<T>>(this.getApiPath(), body)
+                .then(({data}) => data)
+        );
     }
 
     delete(id: string | number): Promise<Rest<T>> {
-        return this.axios.delete<Rest<T>>(this.getApiPath() + `/${id}`)
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.axios.delete<Rest<T>>(this.getApiPath() + `/${id}`)
+                .then(({data}) => data)
+        );
     }
 
     detail(id: string | number): Promise<Rest<T>> {
-        return this.axios.get<Rest<T>>(this.getApiPath() + `/${id}`)
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.axios.get<Rest<T>>(this.getApiPath() + `/${id}`)
+                .then(({data}) => data)
+        );
     }
 
     list(params: any): Promise<Rest<T[]>> {
-        return this.axios.get<Rest<T[]>>(this.getApiPath(), {
-            params,
-        }).then(({data}) => data);
+        return this.waitForReady(
+            () => this.axios.get<Rest<T[]>>(this.getApiPath(), {
+                params,
+            }).then(({data}) => data)
+        );
     }
 
     setClient(client: AxiosInstance): void {
@@ -68,9 +102,13 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
     }
 
     update(id: string | number, body: any): Promise<Rest<T>> {
-        return this.axios.put<Rest<T>>(this.getApiPath() + `/${id}`, body)
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.axios.put<Rest<T>>(this.getApiPath() + `/${id}`, body)
+                .then(({data}) => data)
+        );
     }
+
+
 
 }
 
@@ -81,7 +119,7 @@ export interface ClientServiceContext {
 const clientServiceContext = createContext<ClientServiceContext>({} as any);
 
 export const ClientServiceProvider = memo(function ClientServiceProvider({children}: PropsWithChildren) {
-    const {data} = useSession();
+    const {data, status} = useSession();
     const accessToken = (data as any)?.accessToken;
     const axios = useMemo(() => {
         return getAxiosInstance(accessToken);
@@ -89,16 +127,28 @@ export const ClientServiceProvider = memo(function ClientServiceProvider({childr
 
     const serviceRef = useRef<{[key: string]: CRUDService}>({});
 
+    useEffect(() => {
+        for (const [k, service] of Object.entries(serviceRef.current)) {
+            service.setStatus(status);
+        }
+    }, [status]);
+
+    useEffect(() => {
+        for (const [k, service] of Object.entries(serviceRef.current)) {
+            service.setClient(axios);
+        }
+    }, [axios]);
+
     const getService = useCallback<ClientServiceContext['getService']>(<T, S extends CRUDService<T> = CRUDService<T>>(type: Type<S>): S => {
         if (serviceRef.current[type.name]) {
             const s = serviceRef.current[type.name];
-            s.setClient(axios);
             return s as any;
         }
         const s = new type(axios);
+        s.setStatus(status);
         serviceRef.current[type.name] = s;
         return s;
-    }, [axios]);
+    }, [axios, status]);
 
     return (
         <clientServiceContext.Provider value={{

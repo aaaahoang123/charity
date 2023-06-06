@@ -1,6 +1,7 @@
 package vn.edu.funix.charity.features.campaign.formatter;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import vn.edu.funix.charity.common.response.Formatter;
 import vn.edu.funix.charity.common.response.ObjectToMap;
@@ -9,6 +10,7 @@ import vn.edu.funix.charity.features.storage.StorageService;
 
 import java.util.Map;
 
+@Lazy
 @Component
 @AllArgsConstructor
 public class OrganizationFormatter implements Formatter {

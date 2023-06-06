@@ -2,6 +2,8 @@ package vn.edu.funix.charity.features.campaign.formatter;
 
 
 import lombok.AllArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import vn.edu.funix.charity.common.response.Formatter;
 import vn.edu.funix.charity.common.response.ObjectToMap;
@@ -13,11 +15,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Lazy
 @Component
 @AllArgsConstructor
 public class CampaignFormatter implements Formatter {
     private final ObjectToMap objectToMap;
     private final StorageService storageService;
+    private final OrganizationFormatter orgFormatter;
     @Override
     public Object format(Object object) {
         if (!(object instanceof Campaign campaign))
@@ -35,6 +39,10 @@ public class CampaignFormatter implements Formatter {
 
         result.put("images", images);
         result.put("imageUrls", imageUrls);
+
+        if (Hibernate.isInitialized(((Campaign) object).getOrganization())) {
+            result.put("organization", orgFormatter.format(((Campaign) object).getOrganization()));
+        }
 
         return result;
     }

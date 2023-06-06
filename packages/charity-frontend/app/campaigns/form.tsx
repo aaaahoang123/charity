@@ -7,32 +7,52 @@ import {
     DatePicker,
     Form,
     Input,
-    InputNumber,
+    InputNumber, message,
     Row,
 } from "antd";
 import 'easymde/dist/easymde.min.css';
 import FileUpload from "@/app/common/component/file-upload";
-import {useCallback} from "react";
-import dynamic from 'next/dynamic';
+import {useCallback, useState} from "react";
 import OrganizationSelector from "@/app/campaigns/OrganizationSelector";
 import Organization from "@/app/core/model/organization";
 import {FormItemProps} from "antd/es/form/FormItem";
 import ReactMarkdown from 'react-markdown';
 import MarkDownEditor from "@/app/common/component/MarkDownEditor";
 import {ReloadOutlined, SendOutlined} from "@ant-design/icons";
+import {useService} from "@/app/core/http-service";
+import CampaignService from "@/app/campaigns/campaign-service";
+import {useRouter} from "next/navigation";
 
 const CampaignForm = () => {
     const [form] = Form.useForm();
+    const [isSubmit, setSubmit] = useState(false);
+    const router = useRouter();
 
+    const service = useService(CampaignService);
     const onFinish = useCallback((values: any) => {
-        console.log(values);
-    }, []);
+        setSubmit(true);
+        const processedValues = {
+            ...values,
+            images: values.images?.join(','),
+            organizationAvatar: values.organizationAvatar?.join(','),
+        };
+        service.create(processedValues)
+            .then(response => {
+                message.success('Tạo đợt quyên góp thành công');
+                router.push('/');
+            }).catch(e => {
+                message.error('Tạo đợt quyên góp thất bại.');
+                console.error(e);
+            })
+            .finally(() => setSubmit(false));
+    }, [setSubmit, service, router]);
     const onSelectOrganization = useCallback((org?: Organization) => {
         form.setFieldsValue({
             organizationName: org?.name,
             organizationPhone: org?.phoneNumber,
             organizationEmail: org?.email,
-            organizationAvatar: org?.avatar,
+            organizationAvatar: org?.avatar ? [org?.avatar] : undefined,
+            initialAvatarUrl: org?.avatarUrl ? [org?.avatarUrl] : undefined,
         });
     }, [form]);
 
@@ -47,7 +67,6 @@ const CampaignForm = () => {
             size={'small'}
             onFinish={onFinish}
             form={form}
-            // style={{ maxWidth: 600 }}
         >
             <Row gutter={8}>
                 <Col xs={24} lg={12}>
@@ -145,14 +164,17 @@ const CampaignForm = () => {
                                         </Form.Item>
                                         <Form.Item label="Avatar"
                                                    name={'organizationAvatar'}>
-                                            <FileUpload maxCount={1} disabled={isDisabled}/>
+                                            <FileUpload maxCount={1}
+                                                        disabled={isDisabled}
+                                                        initialValues={form.getFieldValue('initialAvatarUrl')}
+                                            />
                                         </Form.Item>
                                     </>
                                 )
                             }}
                         </Form.Item>
                     </Card>
-                    <Card className={'mt-2'} title={'Xem trước nội dung'}>
+                    <Card className={'mt-2 campaign-content'} title={'Xem trước nội dung'}>
                         <Form.Item noStyle={true}
                                    shouldUpdate={(oldValue, newValue) => oldValue.content !== newValue.content}>
                             {form => (
@@ -170,6 +192,7 @@ const CampaignForm = () => {
                                         className={'w-full'}
                                         type={'primary'}
                                         icon={<SendOutlined />}
+                                        loading={isSubmit}
                                 >
                                     Submit
                                 </Button>

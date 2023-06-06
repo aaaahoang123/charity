@@ -6,3 +6,5 @@ class CampaignService extends BaseCRUDService<Campaign> {
         return '/api/v1/campaigns';
     }
 }
+
+export default CampaignService;

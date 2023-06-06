@@ -2,10 +2,11 @@
 
 import {Button, Upload, UploadProps} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
-import {forwardRef, useCallback, useEffect, useState} from "react";
+import {forwardRef, useCallback, useEffect, useRef, useState} from "react";
 import {UploadChangeParam, UploadFile} from "antd/es/upload/interface";
 import {useSession} from "next-auth/react";
 import {API_URL} from "@/app/core/constant";
+import {isEqual} from "lodash";
 
 export interface FileUpLoadProps extends Omit<UploadProps, 'onChange' | 'action'> {
     value?: string[];
@@ -37,8 +38,13 @@ const FileUpload = forwardRef(function FileUpload({
     const [fileList, setFileList] = useState(linksToFiles(initialValues));
     const {data: session} = useSession();
 
+    const initialValueRef = useRef<string[]>();
+
     useEffect(() => {
-        setFileList(linksToFiles(initialValues));
+        if (!isEqual(initialValueRef.current, initialValues)) {
+            setFileList(linksToFiles(initialValues));
+        }
+        initialValueRef.current = initialValues;
     }, [initialValues, setFileList]);
 
     const onUpload = useCallback(({fileList, file}: UploadChangeParam) => {

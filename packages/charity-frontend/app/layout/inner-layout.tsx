@@ -30,7 +30,7 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
         <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
             <Header className={'blur-shadow flex items-center'}>
                 <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
-                    <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} />
+                    <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} priority={true} />
                 </Link>
                 <MainMenu />
             </Header>
@@ -45,7 +45,7 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
 
 export default function InnerLayout({children}: any) {
     return (
-        <SessionProvider refetchInterval={140}>
+        <SessionProvider refetchInterval={140} refetchOnWindowFocus={true}>
             <ConfigProvider
                 theme={{
                     token: {

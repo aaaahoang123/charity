@@ -82,7 +82,6 @@ export const authOptions: AuthOptions = {
                 };
                 (session as any).issuer = de.iss;
             }
-            console.log(session);
             return session;
         },
         async jwt({token, user, account, profile, isNewUser}) {
