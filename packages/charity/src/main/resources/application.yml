@@ -28,7 +28,7 @@ com:
                 prefix: ROLE_
         permit-all:
           - "/public**"
-          - "/api/v1/public*"
+          - "/api/v1/public/**"
 spring:
   jpa:
     hibernate:

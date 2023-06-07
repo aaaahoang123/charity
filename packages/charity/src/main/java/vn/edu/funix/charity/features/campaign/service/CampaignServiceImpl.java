@@ -23,11 +23,10 @@ import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.campaign.repository.OrganizationRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasId;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasOrganizationPhone;
-import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasStatus;
+import vn.edu.funix.charity.features.campaign.repository.spec.CampaignNotHasStatus;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasTerm;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -69,8 +68,8 @@ public class CampaignServiceImpl implements CampaignService {
     public Page<Campaign> list(ListCampaignParams params, Pageable pageable) {
         Specification<Campaign> spec = Specification.where(new FetchRelation<>("organization"));
 
-        if (params.getStatus() != null) {
-            spec = spec.and(new CampaignHasStatus(params.getStatus()));
+        if (params.getIgnoreStatus() != null) {
+            spec = spec.and(new CampaignNotHasStatus(params.getIgnoreStatus()));
         }
 
         if (params.getId() != null) {

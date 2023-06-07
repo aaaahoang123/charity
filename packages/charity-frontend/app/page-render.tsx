@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export interface HomeRenderProps {
     campaigns: Campaign[];
-    pagination: RestMeta;
+    pagination?: RestMeta;
 }
 
 export const CampaignItem = ({campaign}: {campaign: Campaign}) => {
