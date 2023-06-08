@@ -7,12 +7,12 @@ class CampaignService extends BaseCRUDService<Campaign> {
         return '/api/v1/campaigns';
     }
 
-    list(params: any): Promise<Rest<Campaign[]>> {
-        return this.waitForReady(
-            () => this.axios.get<Rest<Campaign[]>>('/api/v1/public/campaigns', {
-                params,
-            }).then(({data}) => data)
-        );
+    protected getListPath(): string {
+        return '/api/v1/public/campaigns';
+    }
+
+    protected getDetailPath(id: string | number): string {
+        return this.getListPath() + `/${id}`;
     }
 }
 

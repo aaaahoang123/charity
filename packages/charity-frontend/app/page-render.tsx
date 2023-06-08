@@ -2,58 +2,84 @@
 
 import Campaign from "@/app/core/model/campaign";
 import {RestMeta} from "@/app/core/model/rest";
-import {Avatar, Card, Col, Progress, Row, Space, theme} from "antd";
+import {Avatar, Button, Card, Col, Progress, Row, Space, Statistic, Tag} from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import {UserOutlined} from "@ant-design/icons";
 import styles from './page-render.module.scss';
+import {useMemo} from "react";
 
 export interface HomeRenderProps {
     campaigns: Campaign[];
     pagination?: RestMeta;
 }
 
+const renderRemainDayTag = (daysRemain: number) => {
+    if (daysRemain < 0) {
+        return <Tag color="magenta" className={'me-0'}>Quá {-daysRemain} ngày</Tag>;
+    }
+
+    if (daysRemain === 0) {
+        return <Tag color={'orange'} className={'me-0'}>Sắp hết hạn</Tag>;
+    }
+
+    return <Tag color={'cyan'} className={'me-0'}>Còn {daysRemain} ngày</Tag>;
+};
+
 export const CampaignItem = ({campaign}: { campaign: Campaign }) => {
-    const {token} = theme.useToken();
+    const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount), [campaign]);
     return (
-        <Card bodyStyle={{ padding: 0 }}>
-            <div className={'aspect-[1.5/1] relative'}>
-                <Image src={campaign.imageUrls?.[0] ?? ''} alt={campaign.title} fill={true} style={{
-                    objectFit: 'cover'
-                }}/>
-            </div>
-            <div className={'mt-3 px-2'}>
-                <Link href={'/'}
-                      className={'font-bold text-xl text-gray-600 hover:text-green-700'}
-                >
-                    {campaign.title}
-                </Link>
-
-                <div>
-                    <Space>
-                        <Avatar src={campaign.organization?.avatarUrl} icon={<UserOutlined />} />
-                        {campaign.organization?.name}
-                    </Space>
-
+        <Link href={`/campaigns/${campaign.slug}`}>
+            <Card bodyStyle={{padding: 0}}>
+                <div className={'aspect-[1.5/1] relative'}>
+                    <Image src={campaign.imageUrls?.[0] ?? ''} alt={campaign.title} fill={true} style={{
+                        objectFit: 'cover'
+                    }}/>
                 </div>
-                Còn {campaign.daysRemain} ngày
+                <div className={'mt-3 px-4'}>
+                    <div className={'mb-2'}>
+                        <span className={'font-bold text-xl text-gray-600 hover:text-green-700'}>
+                            {campaign.title}
+                        </span>
+                    </div>
 
-                <div>
-                    100000000 / 20000000000
-                    <Progress percent={20} showInfo={false} />
+
+                    <Row className={'mb-2'}>
+                        <Col flex={5}>
+                            <Space>
+                                <Avatar src={campaign.organization?.avatarUrl} icon={<UserOutlined/>}/>
+                                {campaign.organization?.name}
+                            </Space>
+                        </Col>
+
+                        <Col flex={2} className={'text-right'}>
+                            {renderRemainDayTag(campaign.daysRemain)}
+                        </Col>
+                    </Row>
+
+                    <div className={'mb-1'}>
+                        <div><strong
+                            className={'text-lg'}>{campaign.totalReceivedAmountStr}</strong> / {campaign.targetAmountStr}
+                        </div>
+                        <Progress percent={percent} showInfo={false} size={'small'}/>
+                    </div>
+
+                    <Row className={'mb-2'}>
+                        <Col flex={1}>
+                            <Statistic className={styles.statistic} title="Lượt quyên góp"
+                                       value={campaign.totalDonations}/>
+                        </Col>
+                        <Col flex={1}>
+                            <Statistic className={styles.statistic} title="Đạt được" value={`${percent}%`}/>
+                        </Col>
+                        <Col flex={1} className={'text-right align-middle'}>
+                            <Button size={'small'}>Quyên góp</Button>
+                        </Col>
+                    </Row>
                 </div>
 
-                <div>
-                    Lượt quyên góp: 200
-                </div>
-                <div>
-                    Đạt được: 6%
-                </div>
-
-
-            </div>
-
-        </Card>
+            </Card>
+        </Link>
     )
 };
 

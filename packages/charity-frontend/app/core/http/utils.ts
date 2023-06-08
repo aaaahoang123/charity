@@ -45,6 +45,26 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
 
     abstract getApiPath(): string;
 
+    protected getCreatePath() {
+        return this.getApiPath();
+    }
+
+    protected getListPath() {
+        return this.getApiPath();
+    }
+
+    protected getDetailPath(id: string | number) {
+        return this.getApiPath() + `/${id}`;
+    }
+
+    protected getUpdatePath(id: string | number) {
+        return this.getDetailPath(id);
+    }
+
+    protected getDeletePath(id: string | number) {
+        return this.getDetailPath(id);
+    }
+
     /**
      * Block the request until the service ready with sessions provided from backend
      * @param fn
@@ -66,28 +86,28 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
 
     create(body: any): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.post<Rest<T>>(this.getApiPath(), body)
+            () => this.axios.post<Rest<T>>(this.getCreatePath(), body)
                 .then(({data}) => data)
         );
     }
 
     delete(id: string | number): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.delete<Rest<T>>(this.getApiPath() + `/${id}`)
+            () => this.axios.delete<Rest<T>>(this.getDeletePath(id))
                 .then(({data}) => data)
         );
     }
 
     detail(id: string | number): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.get<Rest<T>>(this.getApiPath() + `/${id}`)
+            () => this.axios.get<Rest<T>>(this.getDetailPath(id))
                 .then(({data}) => data)
         );
     }
 
     list(params: any): Promise<Rest<T[]>> {
         return this.waitForReady(
-            () => this.axios.get<Rest<T[]>>(this.getApiPath(), {
+            () => this.axios.get<Rest<T[]>>(this.getListPath(), {
                 params,
             }).then(({data}) => data)
         );
@@ -99,7 +119,7 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
 
     update(id: string | number, body: any): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.put<Rest<T>>(this.getApiPath() + `/${id}`, body)
+            () => this.axios.put<Rest<T>>(this.getUpdatePath(id), body)
                 .then(({data}) => data)
         );
     }

@@ -5,6 +5,7 @@ interface Campaign {
     createdByUserId: string;
     images?: string;
     targetAmount: number;
+    targetAmountStr: string;
     description: string;
     title: string;
     content: string;
@@ -19,6 +20,9 @@ interface Campaign {
     status: string;
     updatedAt: string;
     daysRemain: number;
+    totalReceivedAmount: number;
+    totalDonations: number;
+    totalReceivedAmountStr: string;
 }
 
 export default Campaign;

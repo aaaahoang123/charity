@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.funix.charity.common.response.FormatWith;
@@ -35,5 +36,10 @@ public class CampaignPublicController {
             params.setIgnoreStatus(null);
         }
         return campaignService.list(params, pageable);
+    }
+
+    @GetMapping("/{slug}")
+    public Campaign detail(@PathVariable("slug") String slug) {
+        return campaignService.detail(slug);
     }
 }

@@ -71,6 +71,12 @@ public class Campaign {
     @Column(nullable = false)
     private String lastUpdatedByUserId;
 
+    @Column(nullable = false)
+    private Long totalReceivedAmount;
+
+    @Column(nullable = false)
+    private Integer totalDonations;
+
     public void setOrganization(Organization organization) {
         this.organization = organization;
         organizationId = organization.getId();

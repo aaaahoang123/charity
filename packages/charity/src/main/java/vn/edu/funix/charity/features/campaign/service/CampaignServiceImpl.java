@@ -45,6 +45,8 @@ public class CampaignServiceImpl implements CampaignService {
         fillCampaignData(campaign, dto);
         campaign.setCreatedByUserId(userId);
         campaign.setLastUpdatedByUserId(userId);
+        campaign.setTotalReceivedAmount(0L);
+        campaign.setTotalDonations(0);
         campaign.setStatus(CampaignStatus.INITIAL);
 
         Organization organization = handleOrganization(dto);
