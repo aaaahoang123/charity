@@ -1,9 +1,10 @@
-import NextAuth, {AuthOptions} from "next-auth";
+import NextAuth, {AuthOptions, getServerSession} from "next-auth";
 import KeycloakProvider, {KeycloakProfile} from "next-auth/providers/keycloak";
 import {OAuthConfig} from "next-auth/providers";
 // @ts-ignore
 import {decodeJwt} from "jose";
 import {JWT} from "next-auth/jwt";
+import {Role} from "@/app/core/role";
 
 /**
  * Takes a token, and returns a new token with updated
@@ -117,6 +118,40 @@ export const authOptions: AuthOptions = {
     }
 };
 
+export const getAccessToken = async (): Promise<string | undefined> => {
+    const session: any = await getServerSession(authOptions);
+    if (session?.accessToken && !session.error) {
+        return session.accessToken;
+    }
+
+    return;
+}
+
+export const sessionMatchAnyRoles = (session: any, roles?: Role[]): true | 'unauthenticated' | 'access-denied' => {
+    if (!session?.resource_access || session?.error) {
+        if (roles?.includes(Role.ROLE_ANONYMOUS)) {
+            return true;
+        }
+        // Nếu không đăng nhập thì chấp nhận nếu role bao gồm role không đăng nhập
+        return 'unauthenticated';
+    }
+
+    for (const role of roles ?? []) {
+        for (const access of Object.values(session.resource_access)) {
+            if ((access as any)?.roles?.includes(role)) {
+                return true;
+            }
+        }
+    }
+    return 'access-denied';
+};
+
+export const matchAnyRoles = async (roles: Role[]): Promise<true | 'unauthenticated' | 'access-denied'> => {
+    const session: any = await getServerSession(authOptions);
+
+    return sessionMatchAnyRoles(session, roles);
+};
+
 const handler = NextAuth(authOptions);
 
-export {handler as GET, handler as POST}
+export {handler as GET, handler as POST};

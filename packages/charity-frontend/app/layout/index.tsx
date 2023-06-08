@@ -13,7 +13,7 @@ export const metadata = {
 
 export default async function RootLayout({children, params}: any) {
     return (
-        <html lang="en">
+        <html lang="en" className={'text-gray-600'}>
         <body className={inter.className}>
             <InnerLayout params={params}>{children}</InnerLayout>
         </body>

@@ -18,13 +18,13 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
         token: { controlHeightLG },
     } = theme.useToken();
 
-    const {data: session} = useSession();
+    // const {data: session} = useSession();
 
-    useEffect(() => {
-        if ((session as any)?.error === 'RefreshAccessTokenError') {
-            signIn('keycloak');
-        }
-    }, [session]);
+    // useEffect(() => {
+    //     if ((session as any)?.error === 'RefreshAccessTokenError') {
+    //         signIn('keycloak');
+    //     }
+    // }, [session]);
 
     return (
         <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>

@@ -14,6 +14,8 @@ import { Menu } from 'antd';
 import {signIn, signOut, useSession} from "next-auth/react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
+import {sessionMatchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
+import {Role} from "@/app/core/role";
 
 type MenuClickEvent = Parameters<NonNullable<MenuProps['onClick']>>[0];
 
@@ -75,8 +77,8 @@ const useMenuItems = () => {
         const result = [...items];
         if (status === 'loading') return result;
 
-        if (status === 'authenticated') {
-            if (access?.realm_access?.roles?.includes?.('ADMIN')) {
+        if (status === 'authenticated' && !(data as any)?.error) {
+            if (sessionMatchAnyRoles(data, [Role.ROLE_ADMIN])) {
                 result.push({
                     label: (
                         <Link href={'/campaigns/create'}>Đợt quyên góp</Link>
@@ -86,7 +88,7 @@ const useMenuItems = () => {
                 })
             }
 
-            if (access?.['realm-management']?.roles?.find((r: string) => r === 'realm-admin')) {
+            if (sessionMatchAnyRoles(data, [Role.REALM_ADMIN])) {
                 const baseUrl = issuer.replace('realms', 'admin');
                 const realm = issuer.split('/').slice(-1);
                 result.push({

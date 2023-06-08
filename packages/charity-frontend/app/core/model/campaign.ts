@@ -18,6 +18,7 @@ interface Campaign {
     slug: string;
     status: string;
     updatedAt: string;
+    daysRemain: number;
 }
 
 export default Campaign;
