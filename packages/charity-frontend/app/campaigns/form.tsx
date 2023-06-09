@@ -7,7 +7,7 @@ import {
     DatePicker,
     Form,
     Input,
-    InputNumber, message,
+    message,
     Row,
 } from "antd";
 import 'easymde/dist/easymde.min.css';
@@ -22,6 +22,7 @@ import {ReloadOutlined, SendOutlined} from "@ant-design/icons";
 import {useService} from "@/app/core/http/components";
 import CampaignService from "@/app/campaigns/campaign-service";
 import {useRouter} from "next/navigation";
+import InputMoney from "@/app/common/component/input-money";
 
 const CampaignForm = () => {
     const [form] = Form.useForm();
@@ -104,7 +105,7 @@ const CampaignForm = () => {
                                        {min: 0, type: 'number'}
                                    ]}
                         >
-                            <InputNumber placeholder={'Số tiền cần quyên góp'}
+                            <InputMoney placeholder={'Số tiền cần quyên góp'}
                                          className={'w-1/2 !important'}
                             />
                         </Form.Item>
