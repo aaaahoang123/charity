@@ -28,14 +28,16 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
 
     return (
         <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
-            <Header className={'blur-shadow flex items-center'}>
-                <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
-                    <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} priority={true} />
-                </Link>
-                <MainMenu />
+            <Header className={'blur-shadow flex items-center p-0'}>
+                <div className={'container mx-auto flex'}>
+                    <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
+                        <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} priority={true} />
+                    </Link>
+                    <MainMenu />
+                </div>
             </Header>
-            <Content style={{ padding: ('0 ' + controlHeightLG * 1.25 + 'px') }}>
-                <div style={{ marginTop: controlHeightLG * 1.25 }}>
+            <Content className={'p-0'}>
+                <div style={{ marginTop: controlHeightLG * 1.25 }} className={'container mx-auto'}>
                     {children}
                 </div>
             </Content>

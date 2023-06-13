@@ -137,14 +137,14 @@ const useMenuItems = () => {
             }
         });
         return result;
-    }, [status, user, access, issuer]);
+    }, [status, data, user?.name, issuer]);
 }
 
 const MainMenu = () => {
     const asPath = usePathname();
     const [current, setCurrent] = useState(asPath);
     const menuItems = useMenuItems();
-
+    console.log(menuItems);
     useEffect(() => {
         setCurrent(asPath);
     }, [asPath, setCurrent]);
@@ -161,7 +161,7 @@ const MainMenu = () => {
                  selectedKeys={[current]}
                  mode="horizontal"
                  items={menuItems}
-                 className={'justify-end border-b-0 ml-auto'}
+                 className={'justify-end border-b-0 ml-auto w-full'}
     />;
 };
 
