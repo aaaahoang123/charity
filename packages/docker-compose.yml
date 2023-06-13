@@ -78,3 +78,11 @@ services:
     networks:
       - frontend
       - backend
+  backend:
+    build:
+      context: ./charity
+    env_file:
+      - charity/.env
+    networks:
+      - frontend
+      - backend
