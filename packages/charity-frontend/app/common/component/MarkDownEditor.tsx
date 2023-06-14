@@ -1,10 +1,10 @@
 'use client'
 
 import {memo, useMemo} from "react";
-import {SimpleMDEReactProps} from "react-simplemde-editor/src/SimpleMdeReact";
 import dynamic from "next/dynamic";
 import {useAxios} from "@/app/core/http/components";
 import Rest from "@/app/core/model/rest";
+import {SimpleMDEReactProps} from "react-simplemde-editor";
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {ssr: false});
 

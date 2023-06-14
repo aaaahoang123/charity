@@ -4,7 +4,8 @@ const nextConfig = {
         domains: [
             process.env.NEXT_PUBLIC_STORAGE_DOMAIN,
         ]
-    }
+    },
+    output: 'standalone',
 }
 
 module.exports = nextConfig

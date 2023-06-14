@@ -1,7 +1,6 @@
 import NextAuth, {AuthOptions, getServerSession} from "next-auth";
 import KeycloakProvider, {KeycloakProfile} from "next-auth/providers/keycloak";
 import {OAuthConfig} from "next-auth/providers";
-// @ts-ignore
 import {decodeJwt} from "jose";
 import {JWT} from "next-auth/jwt";
 import {Role} from "@/app/core/role";
@@ -76,9 +75,9 @@ export const authOptions: AuthOptions = {
                 (session as any).error = token.error;
             }
             if (accessToken) {
-                const de = decodeJwt(accessToken);
+                const de = decodeJwt(accessToken as any);
                 (session as any).resource_access = {
-                    ...de.resource_access,
+                    ...de.resource_access ?? {},
                     realm_access: de.realm_access,
                 };
                 (session as any).issuer = de.iss;
