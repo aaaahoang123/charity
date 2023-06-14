@@ -12,7 +12,7 @@ import {
 } from "antd";
 import 'easymde/dist/easymde.min.css';
 import FileUpload from "@/app/common/component/file-upload";
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import OrganizationSelector from "@/app/campaigns/OrganizationSelector";
 import Organization from "@/app/core/model/organization";
 import {FormItemProps} from "antd/es/form/FormItem";
@@ -23,9 +23,37 @@ import {useService} from "@/app/core/http/components";
 import CampaignService from "@/app/campaigns/campaign-service";
 import {useRouter} from "next/navigation";
 import InputMoney from "@/app/common/component/input-money";
+import Campaign from "@/app/core/model/campaign";
+import dayjs from "dayjs";
 
-const CampaignForm = () => {
+export interface CampaignFormProps {
+    campaign?: Campaign;
+}
+
+const CampaignForm = ({ campaign }: CampaignFormProps) => {
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        console.log(campaign);
+        if (!campaign) return;
+        const org = campaign.organization;
+        form.setFieldsValue({
+            title: campaign?.title,
+            description: campaign?.description,
+            deadline: dayjs(campaign?.deadline),
+            targetAmount: campaign.targetAmount,
+            images: campaign.images,
+            initialImages: campaign.imageUrls,
+            content: campaign.content,
+            organizationId: campaign.organizationId,
+            organizationName: org?.name,
+            organizationPhone: org?.phoneNumber,
+            organizationEmail: org?.email,
+            organizationAvatar: org?.avatar ? [org?.avatar] : undefined,
+            initialAvatarUrl: org?.avatarUrl ? [org?.avatarUrl] : undefined,
+        });
+    }, [campaign, form]);
+
     const [isSubmit, setSubmit] = useState(false);
     const router = useRouter();
 
@@ -37,16 +65,24 @@ const CampaignForm = () => {
             images: values.images?.join(','),
             organizationAvatar: values.organizationAvatar?.join(','),
         };
-        service.create(processedValues)
+        const promise = campaign
+            ? service.update(campaign.slug, processedValues)
+            : service.create(processedValues);
+
+        const msg = campaign
+            ? 'Sửa thông tin quyên góp'
+            : 'Tạo đợt quyên góp';
+        promise
             .then(_ => {
-                message.success('Tạo đợt quyên góp thành công');
+                message.success(`${msg} thành công`);
                 router.push('/');
             }).catch(e => {
-                message.error('Tạo đợt quyên góp thất bại.');
+                message.error(`${msg} thất bại`);
                 console.error(e);
             })
             .finally(() => setSubmit(false));
-    }, [setSubmit, service, router]);
+    }, [setSubmit, service, router, campaign]);
+
     const onSelectOrganization = useCallback((org?: Organization) => {
         form.setFieldsValue({
             organizationName: org?.name,
@@ -109,11 +145,20 @@ const CampaignForm = () => {
                                          className={'w-1/2 !important'}
                             />
                         </Form.Item>
-                        <Form.Item label="Hình ảnh"
-                                   name={'images'}
+                        <Form.Item noStyle={true}
+                                   shouldUpdate={(oldData, newData) => oldData.initialImages !== newData.initialImages}
                         >
-                            <FileUpload multiple={true}/>
+                            {form => (
+                                <Form.Item label="Hình ảnh"
+                                           name={'images'}
+                                >
+                                    <FileUpload multiple={true}
+                                                initialValues={form.getFieldValue('initialImages')}
+                                    />
+                                </Form.Item>
+                            )}
                         </Form.Item>
+
                         <Form.Item label="Nội dung"
                                    rules={[
                                        {required: true},

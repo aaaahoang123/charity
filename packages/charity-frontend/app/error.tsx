@@ -1,15 +1,19 @@
 'use client';
 
 import {useEffect} from "react";
+import {NotFound} from "next/dist/client/components/error";
 
 const Error = ({error, reset}: any) => {
     useEffect(() => {
-        // Log the error to an error reporting service
-        console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        console.error(error);
     }, [error])
-    return (
+    return error.toString().includes('status code 404') ? (
         <div>
-            oops
+            404 Not found resource
+        </div>
+    ) : (
+        <div>
+            Server error
         </div>
     )
 };
