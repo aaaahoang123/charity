@@ -16,11 +16,11 @@ const ClientNeedAuth = ({children, roles}: PropsWithChildren<ClientNeedAuthProps
         return sessionMatchAnyRoles(session, roles);
     }, [session, roles]);
 
-    if (isMatch) {
+    if (isMatch === true) {
         return <>{children}</>;
     }
 
-    return undefined;
+    return null;
 };
 
 export default ClientNeedAuth;

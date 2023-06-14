@@ -1,6 +1,6 @@
 'use client';
 
-import Campaign from "@/app/core/model/campaign";
+import Campaign, {CampaignStatus} from "@/app/core/model/campaign";
 import {RestMeta} from "@/app/core/model/rest";
 import {Avatar, Button, Card, Col, Progress, Row, Space, Statistic, Tag} from "antd";
 import Image from "next/image";
@@ -8,6 +8,9 @@ import Link from "next/link";
 import {UserOutlined} from "@ant-design/icons";
 import styles from './page-render.module.scss';
 import {useMemo} from "react";
+import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
+import {Role} from "@/app/core/role";
+import DeleteCampaignBtn from "@/app/delete-campaign-btn";
 
 export interface HomeRenderProps {
     campaigns: Campaign[];
@@ -72,9 +75,25 @@ export const CampaignItem = ({campaign}: { campaign: Campaign }) => {
                         <Col flex={1}>
                             <Statistic className={styles.statistic} title="Đạt được" value={`${percent}%`}/>
                         </Col>
-                        <Col flex={1} className={'text-right align-middle'}>
-                            <Button size={'small'}>Quyên góp</Button>
+                        <Col flex={1} className={'text-right align-middle flex-col flex '}>
+                            <ClientNeedAuth roles={[Role.ROLE_ANONYMOUS, Role.ROLE_USER]}>
+                                <Button size={'small'}>Quyên góp</Button>
+                            </ClientNeedAuth>
+                            <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
+                                {
+                                    campaign.status === CampaignStatus.INITIAL
+                                        ? <DeleteCampaignBtn campaign={campaign} />
+                                        : null
+                                }
+                                {
+                                    campaign.totalDonations === 0
+                                        ?
+                                        <Button type={'default'} size={'small'}><Link href={`/campaigns/${campaign.slug}/edit`}>Sửa</Link></Button>
+                                        : null
+                                }
+                            </ClientNeedAuth>
                         </Col>
+
                     </Row>
                 </div>
 

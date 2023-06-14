@@ -144,7 +144,6 @@ const MainMenu = () => {
     const asPath = usePathname();
     const [current, setCurrent] = useState(asPath);
     const menuItems = useMenuItems();
-    console.log(menuItems);
     useEffect(() => {
         setCurrent(asPath);
     }, [asPath, setCurrent]);

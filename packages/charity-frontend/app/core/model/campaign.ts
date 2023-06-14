@@ -1,5 +1,12 @@
 import Organization from "@/app/core/model/organization";
 
+export enum CampaignStatus {
+    INITIAL = 'INITIAL',
+    OPENING = 'OPENING',
+    OUT_DATED = 'OUT_DATED',
+    CLOSED = 'CLOSED',
+}
+
 interface Campaign {
     id: number;
     createdByUserId: string;
@@ -17,7 +24,7 @@ interface Campaign {
     imageUrls?: string[];
     deadline: string;
     slug: string;
-    status: string;
+    status: CampaignStatus;
     updatedAt: string;
     daysRemain: number;
     totalReceivedAmount: number;

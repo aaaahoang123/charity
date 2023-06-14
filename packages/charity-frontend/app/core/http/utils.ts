@@ -58,11 +58,11 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
     }
 
     protected getUpdatePath(id: string | number) {
-        return this.getDetailPath(id);
+        return this.getApiPath() + `/${id}`;
     }
 
     protected getDeletePath(id: string | number) {
-        return this.getDetailPath(id);
+        return this.getApiPath() + `/${id}`;
     }
 
     /**

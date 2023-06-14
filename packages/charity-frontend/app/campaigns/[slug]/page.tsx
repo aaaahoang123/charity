@@ -4,7 +4,6 @@ import CampaignService from "@/app/campaigns/campaign-service";
 import CampaignDetailRender from "@/app/campaigns/[slug]/page-render";
 
 const CampaignDetail = async ({ params, searchParams }: any) => {
-    console.log({params, searchParams});
     const {slug} = params;
     const token = await getAccessToken();
 
