@@ -24,7 +24,7 @@ const DeleteCampaignBtn = ({campaign}: DeleteCampaignBtnProps) => {
                 console.log(e);
                 message.error(e.message);
             });
-    }, [service, campaign.id, router]);
+    }, [service, campaign.slug, router]);
 
     return (
         <Popconfirm title={`Bạn chắc chắn muốn xoá đợt quyên góp ${campaign.title} chứ?`}
