@@ -87,6 +87,8 @@ services:
     networks:
       - frontend
       - backend
+    depends_on:
+      - mariadb
 
   frontend:
     build:
