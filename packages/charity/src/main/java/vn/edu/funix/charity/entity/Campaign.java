@@ -15,7 +15,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "campaigns")
+@Table(
+        name = "campaigns",
+        indexes = {
+                @Index(columnList = "createdByUserId"),
+                @Index(columnList = "lastUpdatedByUserId")
+        }
+)
 @Where(clause = "deleted_at is null")
 @SQLDelete(sql = "UPDATE campaigns SET deleted_at = now() WHERE id = ?")
 public class Campaign {
