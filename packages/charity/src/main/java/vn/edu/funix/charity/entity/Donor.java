@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "donors")
 @Where(clause = "deleted_at is null")
-@SQLDelete(sql = "UPDATE donors SET deletedAt = now() WHERE id = ?")
+@SQLDelete(sql = "UPDATE donors SET deleted_at = now() WHERE id = ?")
 public class Donor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

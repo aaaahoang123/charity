@@ -1,26 +1,58 @@
 'use client'
 
 import {ConfigProvider, Layout, theme} from "antd";
-import {SessionProvider} from "next-auth/react";
+import {SessionProvider, signIn, useSession} from "next-auth/react";
 import MainMenu from "@/app/layout/Menu";
-import {useEffect, useState} from "react";
+import {PropsWithChildren, useEffect, useState} from "react";
+import Image from "next/image";
+import Link from "next/link";
+import validateMessages from './validateMessage.json';
+import {ClientServiceProvider} from "@/app/core/http/components";
 
 const { Header, Content, Footer } = Layout;
 
-export default function InnerLayout({children, session}: any) {
+const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
     const {
-        token: { colorBgContainer, controlHeightLG },
+        token: { controlHeightLG },
     } = theme.useToken();
 
+    // const {data: session} = useSession();
+
+    // useEffect(() => {
+    //     if ((session as any)?.error === 'RefreshAccessTokenError') {
+    //         signIn('keycloak');
+    //     }
+    // }, [session]);
+
     return (
-        <SessionProvider session={session}>
+        <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
+            <Header className={'blur-shadow flex items-center p-0'}>
+                <div className={'container mx-auto flex'}>
+                    <Link href={'/'} className={'logo'} style={{width: 128, height: 45}}>
+                        <Image src={'/logo.png'} alt={'Logo'} width={128} height={45} priority={true} />
+                    </Link>
+                    <MainMenu />
+                </div>
+            </Header>
+            <Content className={'p-0'}>
+                <div style={{ marginTop: controlHeightLG * 1.25 }} className={'container mx-auto'}>
+                    {children}
+                </div>
+            </Content>
+        </Layout>
+    )
+}
+
+export default function InnerLayout({children}: any) {
+    return (
+        <SessionProvider refetchInterval={140} refetchOnWindowFocus={true}>
             <ConfigProvider
                 theme={{
                     token: {
                         colorPrimary: '#00b96b',
-                        colorBgLayout: '#ffffff'
+                        colorBgLayout: '#f5f6f7'
                     },
                     components: {
                         Layout: {
@@ -28,16 +60,16 @@ export default function InnerLayout({children, session}: any) {
                         },
                     }
                 }}
+                form={{
+                    validateMessages,
+                    requiredMark: true,
+                }}
             >
-                <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
-                    <Header className={'blur-shadow'}>
-                        <div className={'logo'} />
-                        <MainMenu />
-                    </Header>
-                    <Content style={{ padding: ('0 ' + controlHeightLG * 1.25 + 'px') }}>
+                <ClientServiceProvider>
+                    <InnerLayoutRenderer>
                         {children}
-                    </Content>
-                </Layout>
+                    </InnerLayoutRenderer>
+                </ClientServiceProvider>
             </ConfigProvider>
         </SessionProvider>
     )

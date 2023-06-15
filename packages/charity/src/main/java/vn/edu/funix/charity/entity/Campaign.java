@@ -15,9 +15,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "campaigns")
+@Table(
+        name = "campaigns",
+        indexes = {
+                @Index(columnList = "createdByUserId"),
+                @Index(columnList = "lastUpdatedByUserId")
+        }
+)
 @Where(clause = "deleted_at is null")
-@SQLDelete(sql = "UPDATE campaigns SET deletedAt = now() WHERE id = ?")
+@SQLDelete(sql = "UPDATE campaigns SET deleted_at = now() WHERE id = ?")
 public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,6 +76,12 @@ public class Campaign {
 
     @Column(nullable = false)
     private String lastUpdatedByUserId;
+
+    @Column(nullable = false)
+    private Long totalReceivedAmount;
+
+    @Column(nullable = false)
+    private Integer totalDonations;
 
     public void setOrganization(Organization organization) {
         this.organization = organization;

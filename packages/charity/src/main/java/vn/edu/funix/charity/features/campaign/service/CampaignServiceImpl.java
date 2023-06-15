@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.exception.BadRequestException;
+import vn.edu.funix.charity.common.specification.FetchRelation;
 import vn.edu.funix.charity.common.util.DateTimeUtils;
 import vn.edu.funix.charity.common.util.StringToSlug;
 import vn.edu.funix.charity.entity.Campaign;
@@ -22,7 +23,7 @@ import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.campaign.repository.OrganizationRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasId;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasOrganizationPhone;
-import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasStatus;
+import vn.edu.funix.charity.features.campaign.repository.spec.CampaignNotHasStatus;
 import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasTerm;
 
 import java.time.LocalDateTime;
@@ -44,6 +45,8 @@ public class CampaignServiceImpl implements CampaignService {
         fillCampaignData(campaign, dto);
         campaign.setCreatedByUserId(userId);
         campaign.setLastUpdatedByUserId(userId);
+        campaign.setTotalReceivedAmount(0L);
+        campaign.setTotalDonations(0);
         campaign.setStatus(CampaignStatus.INITIAL);
 
         Organization organization = handleOrganization(dto);
@@ -65,10 +68,10 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public Page<Campaign> list(ListCampaignParams params, Pageable pageable) {
-        Specification<Campaign> spec = Specification.where(null);
+        Specification<Campaign> spec = Specification.where(new FetchRelation<>("organization"));
 
-        if (params.getStatus() != null) {
-            spec = spec.and(new CampaignHasStatus(params.getStatus()));
+        if (params.getIgnoreStatus() != null) {
+            spec = spec.and(new CampaignNotHasStatus(params.getIgnoreStatus()));
         }
 
         if (params.getId() != null) {

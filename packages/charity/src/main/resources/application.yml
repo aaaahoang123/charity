@@ -1,5 +1,6 @@
 server:
   port: ${PORT:8080}
+  max-http-request-header-size: 512KB
 
 vn:
   edu:
@@ -16,9 +17,6 @@ com:
   c4-soft:
     springaddons:
       security:
-        cors:
-          - path: /**
-            allowed-origins: ${CORS_ORIGIN:}
         issuers:
           - location: ${KEYCLOAK_URL:http://localhost:8081}
             username-claim: preferred_username
@@ -28,8 +26,12 @@ com:
                 prefix: ROLE_
         permit-all:
           - "/public**"
-          - "/api/v1/public*"
+          - "/api/v1/public/**"
+
+
 spring:
+  profiles:
+    active: ${APP_ENV:prod}
   jpa:
     hibernate:
       ddl-auto: update
@@ -39,7 +41,10 @@ spring:
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: org.mariadb.jdbc.Driver
+  application:
+    name: ${APP_NAME:Charity}
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+

@@ -10,6 +10,20 @@ body {
     box-shadow: 0 8px 24px -2px rgba(0,0,0,.05);
 }
 
+.campaign-content {
+    img {
+        width: 100%;
+    }
+    *:has(> img) {
+        text-align: center;
+    }
+}
+
+.gray-title {
+    font-size: 12px;
+    color: rgba(0,0,0,.45);
+}
+
 /*:root {*/
 /*  --foreground-rgb: 0, 0, 0;*/
 /*  --background-start-rgb: 214, 219, 220;*/

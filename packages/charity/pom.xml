@@ -10,7 +10,7 @@
     </parent>
     <groupId>vn.edu.funix</groupId>
     <artifactId>charity</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${APP_VERSION}</version>
     <name>charity</name>
     <description>charity</description>
     <properties>

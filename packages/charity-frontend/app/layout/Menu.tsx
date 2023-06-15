@@ -1,17 +1,23 @@
 'use client'
 
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     AppstoreOutlined,
     LoginOutlined,
     LogoutOutlined,
-    MailOutlined,
+    MailOutlined, PlusOutlined,
     SettingOutlined,
     UserOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import {signIn, signOut, useSession} from "next-auth/react";
+import Link from "next/link";
+import {usePathname} from "next/navigation";
+import {sessionMatchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
+import {Role} from "@/app/core/role";
+
+type MenuClickEvent = Parameters<NonNullable<MenuProps['onClick']>>[0];
 
 const items: MenuProps['items'] = [
     {
@@ -71,8 +77,18 @@ const useMenuItems = () => {
         const result = [...items];
         if (status === 'loading') return result;
 
-        if (status === 'authenticated') {
-            if (access?.['realm-management']?.roles?.find((r: string) => r === 'realm-admin')) {
+        if (status === 'authenticated' && !(data as any)?.error) {
+            if (sessionMatchAnyRoles(data, [Role.ROLE_ADMIN])) {
+                result.push({
+                    label: (
+                        <Link href={'/campaigns/create'}>Đợt quyên góp</Link>
+                    ),
+                    key: '/campaigns/create',
+                    icon: <PlusOutlined />
+                })
+            }
+
+            if (sessionMatchAnyRoles(data, [Role.REALM_ADMIN])) {
                 const baseUrl = issuer.replace('realms', 'admin');
                 const realm = issuer.split('/').slice(-1);
                 result.push({
@@ -121,27 +137,30 @@ const useMenuItems = () => {
             }
         });
         return result;
-    }, [status, user, access, issuer]);
+    }, [status, data, user?.name, issuer]);
 }
 
 const MainMenu = () => {
-    const [current, setCurrent] = useState('mail');
+    const asPath = usePathname();
+    const [current, setCurrent] = useState(asPath);
     const menuItems = useMenuItems();
-    const onClick: MenuProps['onClick'] = async (e) => {
-        setCurrent(e.key);
+    useEffect(() => {
+        setCurrent(asPath);
+    }, [asPath, setCurrent]);
+    const onClick: MenuProps['onClick'] = useCallback(async (e: MenuClickEvent) => {
         if (e.key === 'login') {
             await signIn('keycloak');
         }
         if (e.key === 'logout') {
             await signOut();
         }
-    };
+    }, []);
 
     return <Menu onClick={onClick}
                  selectedKeys={[current]}
                  mode="horizontal"
                  items={menuItems}
-                 className={'justify-end border-b-0'}
+                 className={'justify-end border-b-0 ml-auto w-full'}
     />;
 };
 

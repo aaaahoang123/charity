@@ -1,0 +1,47 @@
+{
+  "default": "${label} không hợp lệ",
+  "required": "${label} không thể bỏ trống",
+  "enum": "${label} phải là một trong các giá trị ${enum}",
+  "whitespace": "${label} không thể bỏ trống",
+  "date": {
+    "format": "${label} có định dạng ngày không hợp lệ",
+    "parse": "${label} không thể chuyển thành dạng ngày",
+    "invalid": "${label} là ngày không hợp lệ"
+  },
+  "types": {
+    "string": "${label} không phải là ${type} hợp lệ",
+    "method": "${label} không phải là ${type} hợp lệ",
+    "array": "${label} không phải là ${type} hợp lệ",
+    "object": "${label} không phải là ${type} hợp lệ",
+    "number": "${label} không phải là ${type} hợp lệ",
+    "date": "${label} không phải là ${type} hợp lệ",
+    "boolean": "${label} không phải là ${type} hợp lệ",
+    "integer": "${label} không phải là số nguyên hợp lệ",
+    "float": "${label} không phải là ${type} hợp lệ",
+    "regexp": "${label} không phải là ${type} hợp lệ",
+    "email": "${label} không phải là ${type} hợp lệ",
+    "url": "${label} không phải là ${type} hợp lệ",
+    "hex": "${label} không phải là ${type} hợp lệ"
+  },
+  "string": {
+    "len": "${label} phải có chính xác ${len} ký tự",
+    "min": "${label} phải có ít nhất ${min} ký tự",
+    "max": "${label} không thể dài quá ${max} ký tự",
+    "range": "${label} phải dài từ ${min} đến ${max} ký tự"
+  },
+  "number": {
+    "len": "${label} phải bằng ${len}",
+    "min": "${label} phải lớn hơn hoặc bằng ${min}",
+    "max": "${label} phải nhỏ hơn hoặc bằng ${max}",
+    "range": "${label} phải có giá trị từ ${min} đến ${max}"
+  },
+  "array": {
+    "len": "${label} phải có ${len} phần tử",
+    "min": "${label} không thể có ít hơn ${min} phần tử",
+    "max": "${label} không thể có nhiều hơn ${max} phần tử",
+    "range": "${label} phải có từ ${min} đến ${max} phần tử"
+  },
+  "pattern": {
+    "mismatch": "${label} không khớp với ${pattern}"
+  }
+}

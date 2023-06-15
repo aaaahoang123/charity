@@ -6,6 +6,7 @@ import com.c4_soft.springaddons.security.oauth2.test.mockmvc.MockMvcSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,9 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
+import vn.edu.funix.charity.features.campaign.service.CampaignService;
 
 import java.time.LocalDate;
+
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -26,6 +31,9 @@ public class CampaignControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Mock
+    private CampaignService service;
 
     @Test
     @DisplayName("Create campaign and return success")
@@ -42,6 +50,8 @@ public class CampaignControllerTest {
         dto.setOrganizationEmail("2@gmail.com");
         dto.setOrganizationPhone("0987654321");
         dto.setOrganizationAvatar("123.png");
+
+        when(service.create("1", dto)).thenReturn(new Campaign());
 
         String campaignString = objectMapper.writeValueAsString(dto);
         System.out.println(campaignString);

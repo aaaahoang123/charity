@@ -10,10 +10,10 @@ import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 
 @AllArgsConstructor
-public class CampaignHasStatus implements Specification<Campaign> {
+public class CampaignNotHasStatus implements Specification<Campaign> {
     private CampaignStatus status;
     @Override
     public Predicate toPredicate(Root<Campaign> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        return cb.equal(root.get("status"), status);
+        return cb.notEqual(root.get("status"), status);
     }
 }
