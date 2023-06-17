@@ -1,0 +1,117 @@
+Enum "campaigns_status_enum" {
+  "CLOSED"
+  "INITIAL"
+  "OPENING"
+  "OUT_DATED"
+}
+
+Enum "donations_status_enum" {
+  "CONFIRMED"
+  "INITIAL"
+  "PROVIDER_TRANSACTION_CREATED"
+  "REJECTED"
+}
+
+Enum "donations_transaction_provider_enum" {
+  "MOMO"
+  "PAYPAL"
+  "TRANSFER"
+  "VN_PAY"
+}
+
+Table "campaigns" {
+  "id" int(11) [pk, not null, increment, note: 'ID đợt quyên góp, tự động tăng']
+  "content" text [not null, note: 'Nội dung hiển thị của đợt quyên góp, lưu text dưới dạng markdown']
+  "created_at" timestamp [default: NULL, note: 'Thời gian tạo đợt quyên góp']
+  "created_by_user_id" varchar(255) [not null, note: 'ID tài khoản đã tạo đợt quyên góp, id này lấy từ user id của keycloak']
+  "deadline" date [not null, note: 'Ngày đợt quyên góp hết hạn']
+  "deleted_at" timestamp [default: NULL, note: 'Thời gian xoá đợt quyên góp, mặc định = null nếu chưa bị xoá (apply soft delete)']
+  "description" varchar(500) [not null, note: 'Mô tả vắn tắt đợt quyên góp']
+  "images" varchar(2048) [default: NULL, note: 'Đường dẫn ảnh của đợt quyên góp, nếu có nhiều ảnh thì sẽ ngăn cách bằng dấu ","']
+  "last_updated_by_user_id" varchar(255) [not null, note: 'Tương tự Id tài khoản tạo, nhưng là người update cuối']
+  "organization_id" int(11) [not null, note: 'Id của tổ chức/cá nhân tổ chức đợt quyên góp']
+  "slug" varchar(300) [not null, note: 'Đường dẫn url của đợt quyên góp, thường được gen trực tiếp từ title']
+  "status" campaigns_status_enum [not null, note: 'Trạng thái đợt quyên góp']
+  "target_amount" bigint(20) [not null, note: 'Số tiền cần quyên góp']
+  "title" varchar(255) [not null, note: 'Tiêu đề đợt quyên góp']
+  "updated_at" timestamp [default: NULL, note: 'Thời gian cập nhật lần cuối']
+  "total_donations" int(11) [not null, note: 'Số lượt đã quyên góp, cần khớp với bảng donations']
+  "total_received_amount" bigint(20) [not null, note: 'Số tiền đã quyên góp, cần khớp với bảng donations']
+
+Indexes {
+  slug [unique, name: "UK_g6ksjym2qdcby6fhnogyttus8"]
+  organization_id [name: "FKsatdia4ouyp8u32ivbg3k3q11"]
+  created_by_user_id [name: "IDXd1moluodbgax5n8hej9ias8ot"]
+  last_updated_by_user_id [name: "IDXayu5rx7o3oui4mt4pav4bsdhr"]
+}
+  Note: 'Đợt quyên góp'
+}
+
+Table "donations" {
+  "id" bigint(20) [pk, not null, increment, note: 'Id lượt quyên góp, tự tăng']
+  "amount" bigint(20) [not null, note: 'Số tiền quyên góp']
+  "created_at" timestamp [default: NULL, note: 'Thời gian tạo bản ghi']
+  "deleted_at" timestamp [default: NULL, note: 'Thời gian xoá bản ghi (soft delete)']
+  "donor_id" int(11) [not null, note: 'ID Người quyên góp']
+  "message" varchar(500) [default: NULL, note: 'Lời nhắn quyên góp']
+  "status" donations_status_enum [not null, note: 'Trạng thái quyên góp']
+  "transaction_code" varchar(255) [default: NULL, note: 'Mã giao dịch (Có thể lấy từ ngân hàng)']
+  "updated_at" timestamp [default: NULL, note: 'Thời gian cập nhật lần cuối']
+  "confirmed_at" timestamp [default: NULL, note: 'Thời gian giao dịch được xác nhận']
+  "transaction_provider" donations_transaction_provider_enum [default: NULL, note: 'Nguồn thanh toán']
+  "campaign_id" int(11) [not null, note: 'Id đợt quyên góp']
+
+Indexes {
+  donor_id [name: "FK1xqpcjicjb1juat5f8itmxj2t"]
+  campaign_id [name: "FKr5m6trggwgkgoanlalgea1psh"]
+}
+  Note: 'Lượt quyên góp'
+}
+
+Table "donors" {
+  "id" int(11) [pk, not null, increment, note: 'Id Người quyên góp']
+  "email" varchar(255) [default: NULL, note: 'Email người quyên góp']
+  "name" varchar(255) [not null, note: 'Tên người quyên góp']
+  "phone_number" varchar(255) [default: NULL, note: 'SDT người quyên góp']
+  "created_at" timestamp [default: NULL, note: 'Thời gian tạo bản ghi']
+  "deleted_at" timestamp [default: NULL, note: 'Thời gian xoá bản ghi (soft delete)']
+  "updated_at" timestamp [default: NULL, note: 'Thời gian cập nhật thông tin lần cuối']
+  "created_by_user_id" varchar(50) [default: NULL, note: 'Id user đã tạo bản ghi (Có thể null nếu tài khoản quyên góp khi chưa đăng nhập)']
+
+Indexes {
+  created_by_user_id [name: "IDX7x7qjdirb39rysoc7abs3isen"]
+}
+  Note: 'Người quyên góp'
+}
+
+Table "organizations" {
+  "id" int(11) [pk, not null, increment, note: 'Id tổ chức']
+  "avatar" varchar(255) [default: NULL, note: 'Avatar/Logo tổ chức']
+  "email" varchar(255) [default: NULL, note: 'Email đại diện']
+  "name" varchar(255) [not null, note: 'Tên tổ chức/cá nhân']
+  "phone_number" varchar(255) [not null, note: 'SDT']
+  "created_at" timestamp [default: NULL, note: 'Thời gian tạo']
+  "deleted_at" timestamp [default: NULL, note: 'Thời gian xoá']
+  "updated_at" timestamp [default: NULL, note: 'Thời gian chỉnh sửa lần cuối']
+  Note: 'Tổ chức/Cá nhân quyên góp'
+}
+
+Table "subscribers" {
+  "id" int(11) [pk, not null, increment, note: 'ID tự generate']
+  "campaign_id" int(11) [not null, note: 'Id đợt quyên góp']
+  "user_id" varchar(50) [not null, note: 'Id user đã theo dõi đợt quyên góp']
+
+Indexes {
+  user_id [name: "IDXi9nkq1al1yxxf8alvi2g4d7qd"]
+  campaign_id [name: "FK7u72ib2tlscxeliuu5sd3kirn"]
+}
+  Note: 'Bảng trung gian chứng minh việc theo dõi của user với đợt quyên góp'
+}
+
+Ref "FKsatdia4ouyp8u32ivbg3k3q11":"organizations"."id" < "campaigns"."organization_id"
+
+Ref "FK1xqpcjicjb1juat5f8itmxj2t":"donors"."id" < "donations"."donor_id"
+
+Ref "FKr5m6trggwgkgoanlalgea1psh":"campaigns"."id" < "donations"."campaign_id"
+
+Ref "FK7u72ib2tlscxeliuu5sd3kirn":"campaigns"."id" < "subscribers"."campaign_id"

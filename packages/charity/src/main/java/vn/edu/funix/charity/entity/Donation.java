@@ -45,6 +45,13 @@ public class Donation {
     @JoinColumn(name = "donor_id", referencedColumnName = "id")
     private Donor donor;
 
+    @Column(insertable = false, updatable = false, nullable = false, name = "campaign_id")
+    private Integer campaignId;
+
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "campaign_id", referencedColumnName = "id")
+    private Campaign campaign;
+
     @CreationTimestamp
     @Column(columnDefinition = "timestamp", updatable = false)
     private LocalDateTime createdAt;
@@ -55,4 +62,7 @@ public class Donation {
 
     @Column(columnDefinition = "timestamp")
     private LocalDateTime deletedAt;
+
+    @Column(columnDefinition = "timestamp")
+    private LocalDateTime confirmedAt;
 }

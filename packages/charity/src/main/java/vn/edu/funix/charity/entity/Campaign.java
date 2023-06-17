@@ -1,12 +1,12 @@
 package vn.edu.funix.charity.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 
 import java.time.LocalDate;
@@ -57,7 +57,7 @@ public class Campaign {
     @JoinColumn(name = "organization_id", referencedColumnName = "id")
     private Organization organization;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private CampaignStatus status;
 
     @CreationTimestamp

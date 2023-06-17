@@ -13,7 +13,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "donors")
+@Table(
+        name = "donors",
+        indexes = {
+                @Index(columnList = "createdByUserId")
+        }
+)
 @Where(clause = "deleted_at is null")
 @SQLDelete(sql = "UPDATE donors SET deleted_at = now() WHERE id = ?")
 public class Donor {
@@ -27,6 +32,9 @@ public class Donor {
     private String phoneNumber;
 
     private String email;
+
+    @Column(length = 50)
+    private String createdByUserId;
 
     @CreationTimestamp
     @Column(columnDefinition = "timestamp", updatable = false)
