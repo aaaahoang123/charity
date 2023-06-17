@@ -2,7 +2,7 @@
 
 import {ConfigProvider, Layout, theme} from "antd";
 import {SessionProvider, signIn, useSession} from "next-auth/react";
-import MainMenu from "@/app/layout/Menu";
+import MainMenu from "@/app/layout/menu";
 import {PropsWithChildren, useEffect, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
