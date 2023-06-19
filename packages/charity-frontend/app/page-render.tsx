@@ -2,22 +2,101 @@
 
 import Campaign, {CampaignStatus} from "@/app/core/model/campaign";
 import {RestMeta} from "@/app/core/model/rest";
-import {Avatar, Button, Card, Col, Progress, Row, Space, Statistic, Tag} from "antd";
+import {
+    Avatar,
+    Button,
+    Card,
+    Col,
+    Collapse,
+    CollapseProps,
+    Form,
+    Input,
+    Progress,
+    Row,
+    Space,
+    Statistic,
+    Tag
+} from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import {UserOutlined} from "@ant-design/icons";
+import {DownOutlined, UserOutlined} from "@ant-design/icons";
 import styles from './page-render.module.scss';
-import {useMemo} from "react";
+import {useCallback, useMemo, useState} from "react";
 import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
 import {Role} from "@/app/core/role";
 import DeleteCampaignBtn from "@/app/delete-campaign-btn";
+import {useSearchParamsObject} from "@/app/common/util/use-search-params-object";
 
 export interface HomeRenderProps {
     campaigns: Campaign[];
     pagination?: RestMeta;
 }
 
-const renderRemainDayTag = (daysRemain: number) => {
+const AdvanceSearch = () => {
+    const [activeKey, setActiveKey] = useState<number>();
+
+    const onClickAdvanceSearch = useCallback(() => {
+        setActiveKey(old => old ? undefined : 1);
+    }, [setActiveKey]);
+
+    const collapseItems: CollapseProps['items'] = [
+        {
+            key: 1,
+            label: <></>,
+            showArrow: false,
+            children: (
+                <Row gutter={8}>
+                    <Col span={8}>
+                        <Form.Item name={'phone'}>
+                            <Input placeholder={'Tìm kiếm bằng SDT'} />
+                        </Form.Item>
+                    </Col>
+                </Row>
+            )
+        }
+    ];
+
+    return (
+        <>
+            <Button type={'link'}
+                    className={'p-0'}
+                    onClick={onClickAdvanceSearch}
+            >
+                Tìm kiếm nâng cao <DownOutlined />
+            </Button>
+            <Collapse activeKey={activeKey}
+                      items={collapseItems}
+                      ghost={true}
+                      bordered={false}
+                      className={styles['no-header-collapse']}
+            />
+        </>
+    )
+}
+
+const SearchBox = () => {
+    const params = useSearchParamsObject();
+    const [form] = Form.useForm();
+
+    return (
+        <Card>
+            <Form form={form}
+                  initialValues={params}
+                  layout={'vertical'}
+            >
+                <Form.Item name={'term'}
+                           label={<strong>Tìm theo từ khoá</strong>}
+                           className={'mb-1'}
+                >
+                    <Input placeholder={'Nhập từ khoá'} className={'w-full'} />
+                </Form.Item>
+                <AdvanceSearch />
+            </Form>
+        </Card>
+    );
+};
+
+const renderRemainDayTagRender = (daysRemain: number) => {
     if (daysRemain < 0) {
         return <Tag color="magenta" className={'me-0'}>Quá {-daysRemain} ngày</Tag>;
     }
@@ -58,7 +137,7 @@ export const CampaignItem = ({campaign}: { campaign: Campaign }) => {
                     </Col>
 
                     <Col flex={2} className={'text-right'}>
-                        {renderRemainDayTag(campaign.daysRemain)}
+                        {renderRemainDayTagRender(campaign.daysRemain)}
                     </Col>
                 </Row>
 
@@ -99,18 +178,20 @@ export const CampaignItem = ({campaign}: { campaign: Campaign }) => {
 
                 </Row>
             </div>
-
         </Card>
     )
 };
 
 const HomeRender = ({campaigns, pagination}: HomeRenderProps) => {
     return (
-        <Card title={<div className={'text-center'}>Những hoàn cảnh khó khăn</div>}>
-            <div className={'grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 auto-rows-fr'}>
-                {campaigns.map(c => <CampaignItem campaign={c} key={c.id}/>)}
-            </div>
-        </Card>
+        <>
+            <SearchBox/>
+            <Card title={<div className={'text-center'}>Những hoàn cảnh khó khăn</div>} className={'mt-3'}>
+                <div className={'grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 auto-rows-fr'}>
+                    {campaigns.map(c => <CampaignItem campaign={c} key={c.id}/>)}
+                </div>
+            </Card>
+        </>
     )
 };
 

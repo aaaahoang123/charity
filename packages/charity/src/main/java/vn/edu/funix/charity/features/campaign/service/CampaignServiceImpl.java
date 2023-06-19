@@ -21,10 +21,7 @@ import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.campaign.repository.OrganizationRepository;
-import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasId;
-import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasOrganizationPhone;
-import vn.edu.funix.charity.features.campaign.repository.spec.CampaignNotHasStatus;
-import vn.edu.funix.charity.features.campaign.repository.spec.CampaignHasTerm;
+import vn.edu.funix.charity.features.campaign.repository.spec.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -84,6 +81,10 @@ public class CampaignServiceImpl implements CampaignService {
 
         if (params.getPhone() != null) {
             spec = spec.and(new CampaignHasOrganizationPhone(params.getPhone()));
+        }
+
+        if (params.getStatus() != null) {
+            spec = spec.and(new CampaignHasStatus(params.getStatus()));
         }
 
         Pageable correctPageable = PageRequest.of(

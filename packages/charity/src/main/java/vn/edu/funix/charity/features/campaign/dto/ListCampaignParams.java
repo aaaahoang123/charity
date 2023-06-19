@@ -9,6 +9,8 @@ import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 public class ListCampaignParams {
     @Enumerated(EnumType.STRING)
     private CampaignStatus ignoreStatus;
+    @Enumerated(EnumType.STRING)
+    private CampaignStatus status;
     private String phone;
     private Integer id;
     private String term;
