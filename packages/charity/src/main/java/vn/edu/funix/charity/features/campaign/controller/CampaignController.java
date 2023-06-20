@@ -2,15 +2,14 @@ package vn.edu.funix.charity.features.campaign.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.funix.charity.common.response.FormatWith;
+import vn.edu.funix.charity.common.security.Role;
 import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
-import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.formatter.CampaignFormatter;
 import vn.edu.funix.charity.features.campaign.service.CampaignService;
 
@@ -23,24 +22,12 @@ public class CampaignController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize("hasRole('" + Role.ADMIN + "')")
     public Campaign create(
             @UserId String userId,
             @Valid @RequestBody CreateCampaignRequestDto dto
     ) {
         return campaignService.create(userId, dto);
-    }
-
-    @GetMapping
-    public Page<Campaign> list(
-            ListCampaignParams params,
-            Pageable pageable
-    ) {
-        return campaignService.list(params, pageable);
-    }
-
-    @GetMapping("/{slug}")
-    public Campaign detail(@PathVariable("slug") String slug) {
-        return campaignService.detail(slug);
     }
 
     @DeleteMapping("/{slug}")

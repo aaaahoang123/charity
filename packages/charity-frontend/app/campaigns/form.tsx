@@ -8,11 +8,11 @@ import {
     Form,
     Input,
     message,
-    Row,
+    Row, Select,
 } from "antd";
 import 'easymde/dist/easymde.min.css';
 import FileUpload from "@/app/common/component/file-upload";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import OrganizationSelector from "@/app/campaigns/OrganizationSelector";
 import Organization from "@/app/core/model/organization";
 import {FormItemProps} from "antd/es/form/FormItem";
@@ -25,6 +25,7 @@ import {useRouter} from "next/navigation";
 import InputMoney from "@/app/common/component/input-money";
 import Campaign from "@/app/core/model/campaign";
 import dayjs from "dayjs";
+import CampaignStatusSelector from "@/app/campaigns/campaign-status-selector";
 
 export interface CampaignFormProps {
     campaign?: Campaign;
@@ -32,12 +33,10 @@ export interface CampaignFormProps {
 
 const CampaignForm = ({ campaign }: CampaignFormProps) => {
     const [form] = Form.useForm();
-
-    useEffect(() => {
-        console.log(campaign);
-        if (!campaign) return;
+    const initialFormValues = useMemo(() => {
+        if (!campaign) return undefined;
         const org = campaign.organization;
-        form.setFieldsValue({
+        return{
             title: campaign?.title,
             description: campaign?.description,
             deadline: dayjs(campaign?.deadline),
@@ -51,8 +50,9 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
             organizationEmail: org?.email,
             organizationAvatar: org?.avatar ? [org?.avatar] : undefined,
             initialAvatarUrl: org?.avatarUrl ? [org?.avatarUrl] : undefined,
-        });
-    }, [campaign, form]);
+            status: campaign.status,
+        };
+    }, [campaign]);
 
     const [isSubmit, setSubmit] = useState(false);
     const router = useRouter();
@@ -99,7 +99,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
             labelCol={{span: 4}}
             wrapperCol={{span: 14}}
             layout="horizontal"
-            initialValues={{size: 'small'}}
+            initialValues={initialFormValues}
             // onValuesChange={onFormLayoutChange}
             size={'small'}
             onFinish={onFinish}
@@ -145,6 +145,18 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                                          className={'w-1/2 !important'}
                             />
                         </Form.Item>
+                        {
+                            campaign ? (
+                                <Form.Item name={'status'}
+                                           rules={[
+                                               {required: true}
+                                           ]}
+                                           label={'Trạng thái'}
+                                >
+                                    <CampaignStatusSelector />
+                                </Form.Item>
+                            ) : null
+                        }
                         <Form.Item noStyle={true}
                                    shouldUpdate={(oldData, newData) => oldData.initialImages !== newData.initialImages}
                         >
