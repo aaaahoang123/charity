@@ -216,7 +216,11 @@ export const CampaignItem = ({campaign}: { campaign: Campaign }) => {
                     </Col>
                     <Col flex={1} className={'text-right align-middle flex-col flex '}>
                         <ClientNeedAuth roles={[Role.ROLE_ANONYMOUS, Role.ROLE_USER]}>
-                            <Button size={'small'}>Quyên góp</Button>
+                            <Button size={'small'}>
+                                <Link href={`/campaigns/${campaign.slug}/donate`}>
+                                    Quyên góp
+                                </Link>
+                            </Button>
                         </ClientNeedAuth>
                         <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
                             {

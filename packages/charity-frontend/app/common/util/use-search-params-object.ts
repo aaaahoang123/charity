@@ -26,5 +26,5 @@ export function useSearchParamsObject<T extends ParamsType = ParamsType>(caster?
             }
         });
         return result;
-    }, [params]);
+    }, [params, caster]);
 }

@@ -26,7 +26,6 @@ public class Donor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private String name;
 
     private String phoneNumber;

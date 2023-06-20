@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import vn.edu.funix.charity.entity.enumerate.DonationStatus;
 import vn.edu.funix.charity.entity.enumerate.TransactionProvider;
 
@@ -15,7 +17,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "donations")
+@Table(
+        name = "donations",
+        indexes = {
+                @Index(columnList = "createdByUserId"),
+                @Index(columnList = "lastUpdatedByUserId")
+        }
+)
 @Where(clause = "deleted_at is null")
 @SQLDelete(sql = "UPDATE donations SET deleted_at = now() WHERE id = ?")
 public class Donation {
@@ -38,10 +46,10 @@ public class Donation {
     @Column(nullable = false)
     private DonationStatus status;
 
-    @Column(insertable = false, updatable = false, nullable = false, name = "donor_id")
+    @Column(insertable = false, updatable = false, name = "donor_id")
     private Integer donorId;
 
-    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     @JoinColumn(name = "donor_id", referencedColumnName = "id")
     private Donor donor;
 
@@ -65,4 +73,20 @@ public class Donation {
 
     @Column(columnDefinition = "timestamp")
     private LocalDateTime confirmedAt;
+
+    @Column(length = 50)
+    private String createdByUserId;
+
+    @Column(length = 50)
+    private String lastUpdatedByUserId;
+
+    public void setCampaign(@NonNull Campaign campaign) {
+        this.campaign = campaign;
+        campaignId = campaign.getId();
+    }
+
+    public void setDonor(@Nullable Donor donor) {
+        this.donor = donor;
+        donorId = donor != null ? donor.getId() : null;
+    }
 }
