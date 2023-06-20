@@ -1,6 +1,5 @@
 import {Role} from "@/app/core/role";
-import {getServerSession} from "next-auth";
-import {authOptions, matchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
+import {matchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
 import {PropsWithChildren} from "react";
 import RedirectLogin from "@/app/common/component/need-auth/redirect-login";
 import AccessDenied from "@/app/common/component/need-auth/access-denied";

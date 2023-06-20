@@ -6,31 +6,46 @@ import {
     Avatar,
     Button,
     Card,
+    Checkbox,
     Col,
     Collapse,
     CollapseProps,
     Form,
-    Input,
+    Input, Pagination,
     Progress,
     Row,
+    Select,
     Space,
     Statistic,
     Tag
 } from "antd";
 import Image from "next/image";
 import Link from "next/link";
-import {DownOutlined, UserOutlined} from "@ant-design/icons";
+import {DownOutlined, SearchOutlined, UserOutlined} from "@ant-design/icons";
 import styles from './page-render.module.scss';
 import {useCallback, useMemo, useState} from "react";
 import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
 import {Role} from "@/app/core/role";
 import DeleteCampaignBtn from "@/app/delete-campaign-btn";
 import {useSearchParamsObject} from "@/app/common/util/use-search-params-object";
+import {sessionMatchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
+import {useSession} from "next-auth/react";
+import {useParams, useRouter} from "next/navigation";
+import isNil from 'lodash/isNil';
+import omitBy from 'lodash/omitBy';
+import CampaignStatusSelector from "@/app/campaigns/campaign-status-selector";
 
 export interface HomeRenderProps {
     campaigns: Campaign[];
     pagination?: RestMeta;
 }
+
+const searchParamsCaster = {
+    isSubscribed: Boolean,
+    page: Number,
+    size: Number,
+    id: Number,
+};
 
 const AdvanceSearch = () => {
     const [activeKey, setActiveKey] = useState<number>();
@@ -39,19 +54,52 @@ const AdvanceSearch = () => {
         setActiveKey(old => old ? undefined : 1);
     }, [setActiveKey]);
 
+    const {data: session} = useSession();
+
     const collapseItems: CollapseProps['items'] = [
         {
             key: 1,
             label: <></>,
             showArrow: false,
             children: (
-                <Row gutter={8}>
-                    <Col span={8}>
-                        <Form.Item name={'phone'}>
-                            <Input placeholder={'Tìm kiếm bằng SDT'} />
-                        </Form.Item>
-                    </Col>
-                </Row>
+                <>
+                    <Row gutter={8}>
+                        <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
+                            <Col span={6}>
+                                <Form.Item name={'id'} className={'mb-1'}>
+                                    <Input placeholder={'Tìm kiếm ID'}/>
+                                </Form.Item>
+                            </Col>
+                        </ClientNeedAuth>
+                        <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
+                            <Col span={6}>
+                                <Form.Item name={'phone'} className={'mb-1'}>
+                                    <Input placeholder={'Tìm kiếm bằng SDT'}/>
+                                </Form.Item>
+                            </Col>
+                        </ClientNeedAuth>
+
+                        <Col span={6}>
+                            <Form.Item name={'status'} className={'mb-1'}>
+                                <CampaignStatusSelector allowClear={true} />
+                            </Form.Item>
+                        </Col>
+                        <ClientNeedAuth roles={[Role.ROLE_ANONYMOUS, Role.ROLE_USER]}>
+                            <Col span={6}>
+                                <Form.Item name={'isSubscribed'} valuePropName={'checked'} className={'mb-1'}>
+                                    <Checkbox>
+                                        Đã theo dõi
+                                    </Checkbox>
+                                </Form.Item>
+                            </Col>
+                        </ClientNeedAuth>
+                    </Row>
+                    <Form.Item>
+                        <Button htmlType={'submit'} type={'primary'}>
+                            <SearchOutlined/>
+                        </Button>
+                    </Form.Item>
+                </>
             )
         }
     ];
@@ -62,7 +110,7 @@ const AdvanceSearch = () => {
                     className={'p-0'}
                     onClick={onClickAdvanceSearch}
             >
-                Tìm kiếm nâng cao <DownOutlined />
+                Tìm kiếm nâng cao <DownOutlined/>
             </Button>
             <Collapse activeKey={activeKey}
                       items={collapseItems}
@@ -75,24 +123,34 @@ const AdvanceSearch = () => {
 }
 
 const SearchBox = () => {
-    const params = useSearchParamsObject();
+    const params = useSearchParamsObject(searchParamsCaster);
     const [form] = Form.useForm();
+    const router = useRouter();
+
+    const handleFinish = useCallback((values: any) => {
+        const freshParams = omitBy(values, isNil);
+        const params = new URLSearchParams(freshParams).toString();
+        router.push('?' + params);
+    }, [router]);
 
     return (
-        <Card>
-            <Form form={form}
-                  initialValues={params}
-                  layout={'vertical'}
+
+        <Form form={form}
+              initialValues={params}
+              layout={'vertical'}
+              onFinish={handleFinish}
+        >
+            <Form.Item name={'term'}
+                       label={<strong>Tìm theo từ khoá</strong>}
+                       className={'mb-1'}
             >
-                <Form.Item name={'term'}
-                           label={<strong>Tìm theo từ khoá</strong>}
-                           className={'mb-1'}
-                >
-                    <Input placeholder={'Nhập từ khoá'} className={'w-full'} />
-                </Form.Item>
-                <AdvanceSearch />
-            </Form>
-        </Card>
+                <Input placeholder={'Nhập từ khoá'}
+                       className={'w-full'}
+                       allowClear
+                />
+            </Form.Item>
+            <AdvanceSearch/>
+        </Form>
     );
 };
 
@@ -182,14 +240,43 @@ export const CampaignItem = ({campaign}: { campaign: Campaign }) => {
     )
 };
 
+const PaginationRender = ({pagination}: HomeRenderProps) => {
+    const router = useRouter();
+    const params = useParams();
+    const onChange = (page: number, size: number) => {
+        const newParams = {
+            ...params,
+            page: page - 1,
+            size,
+        }
+        router.push('?' + new URLSearchParams(newParams as any).toString());
+    };
+
+    return (
+        <Pagination
+            current={(pagination?.currentPage ?? 0) + 1}
+            pageSize={pagination?.size ?? 20}
+            total={pagination?.total}
+            onChange={onChange}
+            showSizeChanger={true}
+            showQuickJumper={true}
+        />
+    )
+};
+
 const HomeRender = ({campaigns, pagination}: HomeRenderProps) => {
     return (
         <>
-            <SearchBox/>
+            <Card>
+                <SearchBox/>
+            </Card>
             <Card title={<div className={'text-center'}>Những hoàn cảnh khó khăn</div>} className={'mt-3'}>
                 <div className={'grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 auto-rows-fr'}>
                     {campaigns.map(c => <CampaignItem campaign={c} key={c.id}/>)}
                 </div>
+            </Card>
+            <Card className={'text-center mt-3'}>
+                <PaginationRender campaigns={campaigns} pagination={pagination}/>
             </Card>
         </>
     )

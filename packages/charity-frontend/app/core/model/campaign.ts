@@ -3,7 +3,7 @@ import Organization from "@/app/core/model/organization";
 export enum CampaignStatus {
     INITIAL = 'INITIAL',
     OPENING = 'OPENING',
-    OUT_DATED = 'OUT_DATED',
+    COMPLETED = 'COMPLETED',
     CLOSED = 'CLOSED',
 }
 

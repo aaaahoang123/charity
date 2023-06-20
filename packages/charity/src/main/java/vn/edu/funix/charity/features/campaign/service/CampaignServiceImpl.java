@@ -87,6 +87,10 @@ public class CampaignServiceImpl implements CampaignService {
             spec = spec.and(new CampaignHasStatus(params.getStatus()));
         }
 
+        if (params.isSubscribed()) {
+            // TODO: Return only subscribed
+        }
+
         Pageable correctPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
