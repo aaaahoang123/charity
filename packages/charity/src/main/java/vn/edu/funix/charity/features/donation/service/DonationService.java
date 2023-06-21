@@ -6,4 +6,5 @@ import vn.edu.funix.charity.features.donation.dto.DonationDto;
 
 public interface DonationService {
     Donation create(@Nullable String userId, DonationDto dto);
+    Donation detail(Long id);
 }

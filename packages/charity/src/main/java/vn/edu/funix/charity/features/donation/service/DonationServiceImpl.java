@@ -1,5 +1,6 @@
 package vn.edu.funix.charity.features.donation.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.entity.Donor;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
+import vn.edu.funix.charity.entity.enumerate.DonationStatus;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.donation.dto.DonationDto;
 import vn.edu.funix.charity.features.donation.repository.DonationRepository;
@@ -33,8 +35,15 @@ public class DonationServiceImpl implements DonationService {
         donation.setCreatedByUserId(userId);
         donation.setLastUpdatedByUserId(userId);
         donation.setTransactionCode("TX" + System.currentTimeMillis());
+        donation.setStatus(DonationStatus.INITIAL);
 
         return donationRepository.save(donation);
+    }
+
+    @Override
+    public Donation detail(Long id) {
+        return donationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy thông tin thanh toán"));
     }
 
     protected Campaign resolveCampaign(String slug) {
@@ -72,11 +81,9 @@ public class DonationServiceImpl implements DonationService {
         return null;
     }
 
-    protected Donation fillDonationData(Donation donation, DonationDto dto) {
+    protected void fillDonationData(Donation donation, DonationDto dto) {
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
         donation.setTransactionProvider(dto.getTransactionProvider());
-
-        return donation;
     }
 }

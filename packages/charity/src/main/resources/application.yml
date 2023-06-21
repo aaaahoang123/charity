@@ -12,6 +12,12 @@ vn:
         gcs-bucket: ${GCS_BUCKET}
         gcs-path-prefix: ${GCS_PATH_PREFIX}
         gcs-uri: ${GCS_URI}
+      payment:
+        transfer:
+          bank: ${PAYMENT_TRANSFER_BANK}
+          name: ${PAYMENT_TRANSFER_NAME}
+          number: ${PAYMENT_TRANSFER_NUMBER}
+          template-type: ${PAYMENT_TRANSFER_TEMPLATE:compact2}
 
 com:
   c4-soft:
