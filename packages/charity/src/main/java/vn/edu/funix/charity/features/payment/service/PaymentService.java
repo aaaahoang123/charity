@@ -1,10 +1,11 @@
 package vn.edu.funix.charity.features.payment.service;
 
+import com.paypal.base.rest.PayPalRESTException;
 import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.features.payment.entity.PaymentInfo;
 
 public interface PaymentService {
-    PaymentInfo generatePaymentInfo(Donation donation);
+    PaymentInfo generatePaymentInfo(Donation donation) throws PayPalRESTException;
 
     boolean isSuccessPayment(Donation donation);
 }

@@ -18,6 +18,10 @@ vn:
           name: ${PAYMENT_TRANSFER_NAME}
           number: ${PAYMENT_TRANSFER_NUMBER}
           template-type: ${PAYMENT_TRANSFER_TEMPLATE:print}
+        paypal:
+          client-id: ${PAYMENT_PAYPAL_CLIENT}
+          client-secret: ${PAYMENT_PAYPAL_SECRET}
+          mode: ${PAYMENT_PAYPAL_MODE:sandbox}
 
 com:
   c4-soft:

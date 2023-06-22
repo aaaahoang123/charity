@@ -29,7 +29,7 @@ public class DonationPublicController {
     }
 
     @GetMapping("{id}/payment")
-    public PaymentInfo paymentInfo(@PathVariable("id") Long id) {
+    public PaymentInfo paymentInfo(@PathVariable("id") Long id) throws Exception {
         Donation donation = donationService.detail(id);
         return paymentManager.getPaymentInfo(donation);
     }

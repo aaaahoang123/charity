@@ -15,7 +15,8 @@ public class PaymentManagerImpl implements PaymentManager {
     private final ApplicationContext context;
     private final Map<TransactionProvider, Class<? extends PaymentService>> serviceMap = Map.of(
             TransactionProvider.TRANSFER, TransferPaymentService.class,
-            TransactionProvider.MOMO, MomoPaymentService.class
+            TransactionProvider.MOMO, MomoPaymentService.class,
+            TransactionProvider.PAYPAL, PaypalPaymentService.class
     );
     @Override
     public PaymentService getPaymentService(Donation donation) {
@@ -24,7 +25,7 @@ public class PaymentManagerImpl implements PaymentManager {
     }
 
     @Override
-    public PaymentInfo getPaymentInfo(Donation donation) {
+    public PaymentInfo getPaymentInfo(Donation donation) throws Exception {
         return getPaymentService(donation).generatePaymentInfo(donation);
     }
 }
