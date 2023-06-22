@@ -17,7 +17,7 @@ vn:
           bank: ${PAYMENT_TRANSFER_BANK}
           name: ${PAYMENT_TRANSFER_NAME}
           number: ${PAYMENT_TRANSFER_NUMBER}
-          template-type: ${PAYMENT_TRANSFER_TEMPLATE:compact2}
+          template-type: ${PAYMENT_TRANSFER_TEMPLATE:print}
 
 com:
   c4-soft:

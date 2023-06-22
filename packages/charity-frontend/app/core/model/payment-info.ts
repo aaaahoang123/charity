@@ -5,18 +5,12 @@ export enum PaymentOpenType {
     HREF = 'HREF',
 
 }
-export interface TransferPaymentInfo {
-    amount: string;
-    number: string;
-    bank: string;
-    addInfo: string;
-    name: string;
-}
+
 interface PaymentInfo {
     url: string;
     openType: PaymentOpenType;
     provider: TransactionProvider;
-    meta: TransferPaymentInfo;
+    meta?: any;
 }
 
 export default PaymentInfo;

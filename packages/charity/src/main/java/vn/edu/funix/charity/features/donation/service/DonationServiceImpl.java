@@ -15,6 +15,8 @@ import vn.edu.funix.charity.features.donation.dto.DonationDto;
 import vn.edu.funix.charity.features.donation.repository.DonationRepository;
 import vn.edu.funix.charity.features.donation.repository.DonorRepository;
 
+import java.util.Collection;
+
 @Service
 @AllArgsConstructor
 public class DonationServiceImpl implements DonationService {
@@ -34,7 +36,7 @@ public class DonationServiceImpl implements DonationService {
         donation.setDonor(donor);
         donation.setCreatedByUserId(userId);
         donation.setLastUpdatedByUserId(userId);
-        donation.setTransactionCode("TX" + System.currentTimeMillis());
+//        donation.setTransactionCode("TX" + System.currentTimeMillis());
         donation.setStatus(DonationStatus.INITIAL);
 
         return donationRepository.save(donation);
@@ -85,5 +87,10 @@ public class DonationServiceImpl implements DonationService {
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
         donation.setTransactionProvider(dto.getTransactionProvider());
+    }
+
+    @Override
+    public Collection<Donor> getListDonorOfUser(String userId) {
+        return donorRepository.findAllByCreatedByUserId(userId);
     }
 }

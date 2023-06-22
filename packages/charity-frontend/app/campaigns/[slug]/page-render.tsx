@@ -8,6 +8,8 @@ import chunk from 'lodash/chunk';
 import {useMemo} from "react";
 import styles from "@/app/page-render.module.scss";
 import {UserOutlined} from "@ant-design/icons";
+import Link from "next/link";
+import {usePathname} from "next/navigation";
 
 export interface CampaignDetailRenderProps {
     campaign: Campaign;
@@ -50,7 +52,6 @@ const renderCarousel = (chunkedImages: string[][]) => {
 };
 
 const CampaignDetailRender = ({campaign}: CampaignDetailRenderProps) => {
-    console.log(campaign);
     const chunkedImages = useMemo(() => {
         if (!campaign.imageUrls?.length) {
             return [] as string[][];
@@ -59,6 +60,8 @@ const CampaignDetailRender = ({campaign}: CampaignDetailRenderProps) => {
     }, [campaign.imageUrls]);
 
     const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount), [campaign]);
+
+    const pathname = usePathname();
     return (
         <>
             <h1 className={'text-2xl'}>{campaign.title}</h1>
@@ -95,7 +98,11 @@ const CampaignDetailRender = ({campaign}: CampaignDetailRenderProps) => {
                             </Col>
                         </Row>
 
-                        <Button type={'primary'} className={'w-full'} size={'large'}>Quyên góp</Button>
+                        <Button type={'primary'} className={'w-full'} size={'large'}>
+                            <Link href={`${pathname}/donate`}>
+                                Quyên góp
+                            </Link>
+                        </Button>
 
                         <Divider type={'horizontal'} />
 

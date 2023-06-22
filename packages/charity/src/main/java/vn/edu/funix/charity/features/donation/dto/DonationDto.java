@@ -22,8 +22,14 @@ public class DonationDto {
     private TransactionProvider transactionProvider;
 
     private Integer donorId;
+
+    @Length(max = 255)
     private String donorName;
+
+    @Length(max = 255)
     private String donorPhoneNumber;
+
+    @Length(max = 255)
     private String donorEmail;
 
     @NotNull
