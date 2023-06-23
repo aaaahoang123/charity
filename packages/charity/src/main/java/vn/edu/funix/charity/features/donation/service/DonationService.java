@@ -10,6 +10,8 @@ import java.util.Collection;
 public interface DonationService {
     Donation create(@Nullable String userId, DonationDto dto);
     Donation detail(Long id);
-
     Collection<Donor> getListDonorOfUser(String userId);
+    Donation approve(Donation donation);
+
+    Donation reject(Donation donation);
 }

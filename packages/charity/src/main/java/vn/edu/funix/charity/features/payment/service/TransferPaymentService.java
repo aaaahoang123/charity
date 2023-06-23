@@ -31,9 +31,4 @@ public class TransferPaymentService implements PaymentService, CurrencyFormatter
 
         return new PaymentInfo(url, openType, provider, null);
     }
-
-    @Override
-    public boolean isSuccessPayment(Donation donation) {
-        return false;
-    }
 }

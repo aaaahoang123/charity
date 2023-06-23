@@ -4,8 +4,12 @@ import com.paypal.base.rest.PayPalRESTException;
 import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.features.payment.entity.PaymentInfo;
 
-public interface PaymentService {
-    PaymentInfo generatePaymentInfo(Donation donation) throws PayPalRESTException;
+import java.util.Map;
 
-    boolean isSuccessPayment(Donation donation);
+public interface PaymentService {
+    PaymentInfo generatePaymentInfo(Donation donation) throws Exception;
+
+    default boolean isSuccessPayment(Donation donation, Map<String, Object> meta) {
+        return false;
+    }
 }

@@ -1,10 +1,9 @@
 package vn.edu.funix.charity.features.payment;
 
-import com.paypal.base.rest.APIContext;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Getter
@@ -14,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class PaymentConfiguration {
     private TransferConfig transfer;
     private PaypalConfig paypal;
+    private Currency currency;
+    private MomoConfig momo;
 
     @Getter
     @Setter
@@ -32,8 +33,16 @@ public class PaymentConfiguration {
         private String mode;
     }
 
-    @Bean
-    public APIContext paypalApiContext() {
-        return new APIContext(paypal.clientId, paypal.clientSecret, paypal.mode);
+    @Data
+    public static class Currency {
+        private String token;
+    }
+
+    @Data
+    public static class MomoConfig {
+        private String endPoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+        private String partnerCode;
+        private String accessKey;
+        private String secretKey;
     }
 }

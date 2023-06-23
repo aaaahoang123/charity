@@ -93,4 +93,26 @@ public class DonationServiceImpl implements DonationService {
     public Collection<Donor> getListDonorOfUser(String userId) {
         return donorRepository.findAllByCreatedByUserId(userId);
     }
+
+    @Override
+    public Donation approve(Donation donation) {
+        donation.setStatus(DonationStatus.CONFIRMED);
+
+        donationRepository.save(donation);
+
+        var campaign = donation.getCampaign();
+
+        campaign.setTotalDonations(campaign.getTotalDonations() + 1);
+        campaign.setTotalReceivedAmount(campaign.getTotalReceivedAmount() + donation.getAmount());
+
+        campaignRepository.save(campaign);
+
+        return donation;
+    }
+
+    @Override
+    public Donation reject(Donation donation) {
+        donation.setStatus(DonationStatus.REJECTED);
+        return donationRepository.save(donation);
+    }
 }

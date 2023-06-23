@@ -4,7 +4,6 @@ import CampaignService from "@/app/campaigns/campaign-service";
 
 const getCampaignBySlug = async (slug: string) => {
     const token = await getAccessToken();
-
     const axios = getAxiosInstance(token);
     const service = new CampaignService(axios);
     service.setStatus('authenticated');

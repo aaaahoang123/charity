@@ -29,7 +29,7 @@ const renderRemainDayTagRender = (daysRemain: number) => {
     return <Tag color={'cyan'} className={'me-0'}>Còn {daysRemain} ngày</Tag>;
 };
 const CampaignItem = ({ campaign, displayActions, title }: CampaignItemProps) => {
-    const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount), [campaign]);
+    const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount * 100), [campaign]);
     return (
         <Card bodyStyle={{padding: 0, flex: 1, display: 'flex', flexDirection: 'column'}}
               title={title}

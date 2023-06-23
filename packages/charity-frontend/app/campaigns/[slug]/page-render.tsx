@@ -2,14 +2,21 @@
 
 import Campaign from "@/app/core/model/campaign";
 import ReactMarkdown from "react-markdown";
-import {Avatar, Button, Card, Carousel, Col, Divider, Progress, Row, Space, Statistic} from "antd";
+import {Avatar, Button, Card, Carousel, Col, Divider, message, Progress, Row, Space, Statistic, App} from "antd";
 import Image from "next/image";
 import chunk from 'lodash/chunk';
-import {useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import styles from "@/app/page-render.module.scss";
 import {UserOutlined} from "@ant-design/icons";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
+import {useSearchParamsObject} from "@/app/common/util/use-search-params-object";
+
+export interface ServerQueryParams {
+    success?: string;
+    error?: string;
+    [key: string]: undefined | null | string;
+}
 
 export interface CampaignDetailRenderProps {
     campaign: Campaign;
@@ -51,7 +58,25 @@ const renderCarousel = (chunkedImages: string[][]) => {
     );
 };
 
-const CampaignDetailRender = ({campaign}: CampaignDetailRenderProps) => {
+const ServerMessageHandler = () => {
+    const [messageApi, contextHolder] = message.useMessage();
+    const query = useSearchParamsObject<ServerQueryParams>();
+    const path = usePathname();
+    const router = useRouter();
+    useEffect(() => {
+        if (query?.success) {
+            messageApi.success(query.success);
+            router.replace(path, {forceOptimisticNavigation: true});
+        } else if (query?.error) {
+            messageApi.error(query.error);
+            router.push(path, {forceOptimisticNavigation: true});
+        }
+    }, [query, messageApi, router, path]);
+
+    return contextHolder;
+};
+
+const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
     const chunkedImages = useMemo(() => {
         if (!campaign.imageUrls?.length) {
             return [] as string[][];
@@ -59,11 +84,12 @@ const CampaignDetailRender = ({campaign}: CampaignDetailRenderProps) => {
         return chunk(campaign.imageUrls, 3);
     }, [campaign.imageUrls]);
 
-    const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount), [campaign]);
+    const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount * 100), [campaign]);
 
     const pathname = usePathname();
     return (
         <>
+            <ServerMessageHandler />
             <h1 className={'text-2xl'}>{campaign.title}</h1>
             <div className={'text-lg'}>{campaign.description}</div>
             <div className={'mt-2'}>{campaign.createdAt}</div>

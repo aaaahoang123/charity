@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "vn.edu.fu.app")
 public class ApplicationConfiguration {
     private Boolean debug = false;
+    private String url;
+    private String frontendUrl;
     @Bean
     public Module hibernateModule() {
         return new Hibernate5JakartaModule();

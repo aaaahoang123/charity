@@ -14,6 +14,8 @@ import Image from "next/image";
 import CampaignItem from "@/app/campaign-list-item";
 import DonorSelector from "@/app/campaigns/[slug]/donate/donor-selector";
 import Donor from "@/app/core/model/donor";
+import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
+import {Role} from "@/app/core/role";
 
 const hasDifferenceDonorId = (oldData: any, newData: any) => oldData?.donorId !== newData?.donorId;
 
@@ -99,14 +101,16 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
                                     </Form.Item>
                                 </Col>
                                 <Col md={12}>
-                                    <Form.Item name={'donorId'}
-                                               label={'Chọn thông tin ủng hộ'}
-                                    >
-                                        <DonorSelector className={'w-full'}
-                                                       allowClear={true}
-                                                       onSelectDonor={onSelectDonor}
-                                        />
-                                    </Form.Item>
+                                    <ClientNeedAuth roles={[Role.ROLE_USER]}>
+                                        <Form.Item name={'donorId'}
+                                                   label={'Chọn thông tin ủng hộ'}
+                                        >
+                                            <DonorSelector className={'w-full'}
+                                                           allowClear={true}
+                                                           onSelectDonor={onSelectDonor}
+                                            />
+                                        </Form.Item>
+                                    </ClientNeedAuth>
                                     <Form.Item
                                         noStyle={true}
                                         shouldUpdate={hasDifferenceDonorId}
