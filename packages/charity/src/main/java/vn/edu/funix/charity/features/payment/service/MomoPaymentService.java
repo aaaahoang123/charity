@@ -34,7 +34,8 @@ public class MomoPaymentService implements PaymentService {
         String orderInfo = "DNC " + donation.getId();
         String redirectUrl = appConfig.getUrl() + "/public/momo/success";
         String requestId = String.valueOf(System.currentTimeMillis());
-        String requestType = "payWithATM";
+        String requestType = "captureWallet";
+//        String requestType = "payWithATM";
         String orderId = "DNC_" + donation.getId();
         Map<String, String> data = new HashMap<>();
 
