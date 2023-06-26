@@ -29,6 +29,6 @@ public class TransferPaymentService implements PaymentService, CurrencyFormatter
         var openType = PaymentInfo.PaymentInfoOpenType.MODAL;
         var provider = donation.getTransactionProvider();
 
-        return new PaymentInfo(url, openType, provider, null);
+        return new PaymentInfo(url, openType, provider, null, null);
     }
 }

@@ -6,7 +6,7 @@ import TransactionProviderSelector from "@/app/campaigns/transaction-provider-se
 import {useCallback, useMemo, useState} from "react";
 import {TransactionProvider} from "@/app/core/model/donation";
 import InputMoney from "@/app/common/component/input-money";
-import {SendOutlined} from "@ant-design/icons";
+import {ExclamationCircleFilled, SendOutlined} from "@ant-design/icons";
 import {useService} from "@/app/core/http/components";
 import DonationService from "@/app/campaigns/[slug]/donate/donation-service";
 import PaymentInfo, {PaymentOpenType} from "@/app/core/model/payment-info";
@@ -18,6 +18,8 @@ import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
 import {Role} from "@/app/core/role";
 
 const hasDifferenceDonorId = (oldData: any, newData: any) => oldData?.donorId !== newData?.donorId;
+
+const { confirm } = Modal;
 
 const DonateRender = ({ campaign }: { campaign: Campaign }) => {
     const [form] = Form.useForm();
@@ -42,19 +44,37 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
     }, [form]);
 
     const onFinish = useCallback((values: any) => {
+        const handlePaymentInfo = (paymentInfo: PaymentInfo) => {
+            if (paymentInfo.openType === PaymentOpenType.MODAL) {
+                setDisplayModal(true);
+            } else {
+                if (paymentInfo.confirmMessage) {
+                    confirm({
+                        title: paymentInfo.confirmMessage,
+                        icon: <ExclamationCircleFilled />,
+                        content: 'Nhấn OK để tiếp tục',
+                        onOk() {
+                            window.location.href = paymentInfo.url;
+                        },
+                        onCancel() {
+                            console.log('Cancel');
+                        },
+                    });
+                } else {
+                    window.location.href = paymentInfo.url;
+                }
+            }
+        };
+
         const handle = async () => {
             if (paymentInfo) {
-                setDisplayModal(true);
+                handlePaymentInfo(paymentInfo);
                 return;
             }
             const donation = await service.create(values);
             const paymentResponse = await service.getPaymentInfo(donation.data.id);
             setPaymentInfo(paymentResponse.data);
-            if (paymentResponse.data.openType === PaymentOpenType.MODAL) {
-                setDisplayModal(true);
-            } else {
-                window.location.href = paymentResponse.data.url;
-            }
+            handlePaymentInfo(paymentResponse.data);
         };
 
         handle();

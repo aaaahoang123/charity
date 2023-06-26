@@ -19,6 +19,8 @@ public class PaymentInfo {
     @Enumerated(EnumType.STRING)
     private TransactionProvider provider;
 
+    private String confirmMessage;
+
     Map<String, Object> meta;
     public enum PaymentInfoOpenType {
         MODAL, HREF,

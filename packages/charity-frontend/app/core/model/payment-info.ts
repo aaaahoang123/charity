@@ -10,6 +10,7 @@ interface PaymentInfo {
     url: string;
     openType: PaymentOpenType;
     provider: TransactionProvider;
+    confirmMessage?: string;
     meta?: any;
 }
 

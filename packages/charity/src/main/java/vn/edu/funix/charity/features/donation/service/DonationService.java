@@ -11,7 +11,7 @@ public interface DonationService {
     Donation create(@Nullable String userId, DonationDto dto);
     Donation detail(Long id);
     Collection<Donor> getListDonorOfUser(String userId);
-    Donation approve(Donation donation);
+    Donation approve(Donation donation, String transactionId);
 
     Donation reject(Donation donation);
 }

@@ -84,6 +84,9 @@ public class PaypalPaymentService implements PaymentService {
                         link.getHref(),
                         PaymentInfo.PaymentInfoOpenType.HREF,
                         TransactionProvider.PAYPAL,
+                        "Do Paypal không hỗ trợ thanh toán bằng VND, số tiền bạn cần thanh toán được tạm tính là: "
+                                + String.format("%.2f", total)
+                                + " USD. Bạn có muốn tiếp tục không?",
                         null
                 );
             }
@@ -94,7 +97,7 @@ public class PaypalPaymentService implements PaymentService {
 
 
     @Override
-    public boolean isSuccessPayment(Donation donation, Map<String, Object> meta) {
+    public String confirmPayment(Donation donation, Map<String, Object> meta) {
         String paymentId = (String) meta.get("paymentId");
         String payerId = (String) meta.get("payerId");
         Payment payment = new Payment();
@@ -108,14 +111,14 @@ public class PaypalPaymentService implements PaymentService {
             logger.debug("Paypal payment with response: " + payment.toJSON());
 
             if (payment.getState().equals("approved")) {
-                return true;
+                return paymentId;
             }
 
             logger.warn("Paypal payment has failed, open debug log for more infos");
-            return false;
+            return null;
         } catch (PayPalRESTException e) {
             logger.error("Paypal error with message: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 

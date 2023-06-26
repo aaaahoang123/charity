@@ -40,13 +40,13 @@ public class PaypalRedirectController {
             @PathVariable("id") Long id
     ) {
         var donation = donationService.detail(id);
-        boolean isSuccess = paymentService.isSuccessPayment(donation, Map.of(
+        String transactionId = paymentService.confirmPayment(donation, Map.of(
                 "paymentId", paymentId,
                 "payerId", payerId
         ));
 
-        if (isSuccess) {
-            donationService.approve(donation);
+        if (transactionId != null) {
+            donationService.approve(donation, transactionId);
 
             return "redirect:"
                     + appConfig.getFrontendUrl()

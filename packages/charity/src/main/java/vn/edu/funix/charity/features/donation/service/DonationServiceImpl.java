@@ -95,9 +95,9 @@ public class DonationServiceImpl implements DonationService {
     }
 
     @Override
-    public Donation approve(Donation donation) {
+    public Donation approve(Donation donation, String transactionId) {
         donation.setStatus(DonationStatus.CONFIRMED);
-
+        donation.setTransactionCode(transactionId);
         donationRepository.save(donation);
 
         var campaign = donation.getCampaign();
