@@ -3,6 +3,8 @@ package vn.edu.funix.charity.features.payment.service;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.util.DateTimeUtils;
 import vn.edu.funix.charity.config.ApplicationConfiguration;
@@ -16,72 +18,50 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service("vnPayPaymentService")
-@RequiredArgsConstructor
 public class VNPayPaymentService implements PaymentService {
     private final PaymentConfiguration config;
     private final ApplicationConfiguration appConfig;
+    private final HmacUtils hmacUtils;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public VNPayPaymentService(PaymentConfiguration config, ApplicationConfiguration appConfig) {
+        this.config = config;
+        this.appConfig = appConfig;
+        hmacUtils = new HmacUtils(HmacAlgorithms.HMAC_SHA_512, config.getVnPay().getSecret());
+    }
     @Override
     public PaymentInfo generatePaymentInfo(Donation donation) throws Exception {
-        String vnp_Version = config.getVnPay().getVersion();
-        String vnp_Command = "pay";
+        String version = config.getVnPay().getVersion();
+        String command = "pay";
         String orderType = config.getVnPay().getOrderType();
-        long amount = donation.getAmount();
-        String vnp_TxnRef = "DNC_" + donation.getId();
-        String vnp_IpAddr = donation.getRequesterIp();
-        String vnp_TmnCode = config.getVnPay().getTerminalCode();
-        String redirectUrl = appConfig.getUrl() + "/public/vnpay/" + donation.getId();
+        long amount = donation.getAmount() * 100;
+        String transactionRef = "DNC_" + donation.getId();
+        String ip = donation.getRequesterIp();
+        String terminalCode = config.getVnPay().getTerminalCode();
+        String redirectUrl = appConfig.getUrl() + getRedirectUri(donation);
 
-        Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", vnp_Version);
-        vnp_Params.put("vnp_Command", vnp_Command);
-        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(amount));
-        vnp_Params.put("vnp_CurrCode", "VND");
-
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-        vnp_Params.put("vnp_OrderType", orderType);
-
-        vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", redirectUrl);
-        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
-
-        DateTimeUtils.formatDateTime(LocalDateTime.now(), "yyyyMMddHHmmss");
+        Map<String, Object> params = new HashMap<>();
+        params.put("vnp_Version", version);
+        params.put("vnp_Command", command);
+        params.put("vnp_TmnCode", terminalCode);
+        params.put("vnp_Amount", String.valueOf(amount));
+        params.put("vnp_CurrCode", "VND");
+        params.put("vnp_TxnRef", transactionRef);
+        params.put("vnp_OrderInfo", "Thanh toan don hang:" + transactionRef);
+        params.put("vnp_OrderType", orderType);
+        params.put("vnp_Locale", "vn");
+        params.put("vnp_ReturnUrl", redirectUrl);
+        params.put("vnp_IpAddr", ip);
 
         String datetimeFormat = "yyyyMMddHHmmss";
         var now = LocalDateTime.now();
 
-        vnp_Params.put("vnp_CreateDate", DateTimeUtils.formatDateTime(now, datetimeFormat));
-        vnp_Params.put("vnp_ExpireDate", DateTimeUtils.formatDateTime(now.plusMinutes(15), datetimeFormat));
+        params.put("vnp_CreateDate", DateTimeUtils.formatDateTime(now, datetimeFormat));
+        params.put("vnp_ExpireDate", DateTimeUtils.formatDateTime(now.plusMinutes(15), datetimeFormat));
 
-        var fieldNames = new ArrayList<>(vnp_Params.keySet());
-        Collections.sort(fieldNames);
-        StringBuilder hashData = new StringBuilder();
-        StringBuilder query = new StringBuilder();
-        var itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
-            String fieldValue = vnp_Params.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                //Build hash data
-                hashData.append(fieldName);
-                hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
-                //Build query
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
-                query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
-                if (itr.hasNext()) {
-                    query.append('&');
-                    hashData.append('&');
-                }
-            }
-        }
-        String queryUrl = query.toString();
+        String queryUrl = buildHashString(params);
 
-        var utils = new HmacUtils(HmacAlgorithms.HMAC_SHA_512, config.getVnPay().getSecret());
-
-        String secureHash = utils.hmacHex(hashData.toString());
+        String secureHash = hmacUtils.hmacHex(queryUrl);
 
         queryUrl += "&vnp_SecureHash=" + secureHash;
         String paymentUrl = config.getVnPay().getEndPoint() + "/paymentv2/vpcpay.html?" + queryUrl;
@@ -93,5 +73,48 @@ public class VNPayPaymentService implements PaymentService {
                 null,
                 null
         );
+    }
+
+    private String buildHashString(Map<String, Object> data) {
+        var fieldNames = new ArrayList<>(data.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        var itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            String fieldName = itr.next();
+            String fieldValue = (String) data.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                //Build hash data
+                hashData.append(fieldName);
+                hashData.append('=');
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+                if (itr.hasNext()) {
+                    hashData.append('&');
+                }
+            }
+        }
+
+        return hashData.toString();
+    }
+
+    @Override
+    public String confirmPayment(Donation donation, Map<String, Object> meta) {
+        String vnp_SecureHash = (String) meta.get("vnp_SecureHash");
+        meta.remove("vnp_SecureHashType");
+        meta.remove("vnp_SecureHash");
+
+        String signValue = hmacUtils.hmacHex(buildHashString(meta));
+
+        if (!Objects.equals(vnp_SecureHash, signValue)) {
+            logger.error("Thông tin hashing không khớp, giao dịch có thể bị hack!");
+            return null;
+        }
+
+        if (!"00".equals(meta.get("vnp_ResponseCode"))) {
+            logger.error("Giao dịch VNPay thất bại với response code: " + meta.get("vnp_ResponseCode"));
+            return null;
+        }
+
+        return (String) meta.get("vnp_TransactionNo");
     }
 }

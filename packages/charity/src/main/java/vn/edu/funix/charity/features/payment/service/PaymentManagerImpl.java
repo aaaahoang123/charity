@@ -29,4 +29,9 @@ public class PaymentManagerImpl implements PaymentManager {
     public PaymentInfo getPaymentInfo(Donation donation) throws Exception {
         return getPaymentService(donation).generatePaymentInfo(donation);
     }
+
+    @Override
+    public String confirmPayment(Donation donation, Map<String, Object> meta) {
+        return getPaymentService(donation).confirmPayment(donation, meta);
+    }
 }

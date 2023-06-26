@@ -37,7 +37,7 @@ public class MomoPaymentService implements PaymentService {
         String extraData = "";
         String ipnUrl = appConfig.getUrl() + "/public/momo/" + donation.getId();
         String orderInfo = generateOrderInfo(donation);
-        String redirectUrl = appConfig.getUrl() + "/public/momo/" + donation.getId();
+        String redirectUrl = appConfig.getUrl() + getRedirectUri(donation);
         String requestId = String.valueOf(System.currentTimeMillis());
 //        String requestType = "captureWallet";
         String requestType = "payWithATM";

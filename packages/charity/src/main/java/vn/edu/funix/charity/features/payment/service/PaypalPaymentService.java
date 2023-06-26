@@ -70,9 +70,9 @@ public class PaypalPaymentService implements PaymentService {
         payment.setTransactions(transactions);
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        var baseRedirectUrl = appConfig.getUrl() + "/public/paypal/" + donation.getId();
-        redirectUrls.setCancelUrl(baseRedirectUrl + "/cancel");
-        redirectUrls.setReturnUrl(baseRedirectUrl + "/success");
+        var baseRedirectUrl = appConfig.getUrl() + getRedirectUri(donation);
+        redirectUrls.setReturnUrl(baseRedirectUrl);
+        redirectUrls.setCancelUrl(baseRedirectUrl.replace("accept", "cancel"));
 
         payment.setRedirectUrls(redirectUrls);
 
