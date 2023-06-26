@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import vn.edu.funix.charity.common.http.Ip;
 import vn.edu.funix.charity.common.security.Role;
 import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Donation;
@@ -29,8 +30,12 @@ public class DonationPublicController {
     }
 
     @GetMapping("{id}/payment")
-    public PaymentInfo paymentInfo(@PathVariable("id") Long id) throws Exception {
+    public PaymentInfo paymentInfo(
+            @PathVariable("id") Long id,
+            @Ip String ip
+    ) throws Exception {
         Donation donation = donationService.detail(id);
+        donation.setRequesterIp(ip);
         return paymentManager.getPaymentInfo(donation);
     }
 }

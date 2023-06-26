@@ -16,7 +16,8 @@ public class PaymentManagerImpl implements PaymentManager {
     private final Map<TransactionProvider, Class<? extends PaymentService>> serviceMap = Map.of(
             TransactionProvider.TRANSFER, TransferPaymentService.class,
             TransactionProvider.MOMO, MomoPaymentService.class,
-            TransactionProvider.PAYPAL, PaypalPaymentService.class
+            TransactionProvider.PAYPAL, PaypalPaymentService.class,
+            TransactionProvider.VN_PAY, VNPayPaymentService.class
     );
     @Override
     public PaymentService getPaymentService(Donation donation) {

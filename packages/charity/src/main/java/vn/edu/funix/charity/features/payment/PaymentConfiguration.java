@@ -15,6 +15,7 @@ public class PaymentConfiguration {
     private PaypalConfig paypal;
     private Currency currency;
     private MomoConfig momo;
+    private VNPayConfig vnPay;
 
     @Getter
     @Setter
@@ -44,5 +45,19 @@ public class PaymentConfiguration {
         private String partnerCode;
         private String accessKey;
         private String secretKey;
+    }
+
+    @Data
+    public static class VNPayConfig {
+        private String version = "2.1.0";
+        private String endPoint = "https://sandbox.vnpayment.vn";
+        private String terminalCode;
+        private String secret;
+        /**
+         * Mã hàng hoá
+         * Xem thêm tại https://sandbox.vnpayment.vn/apis/docs/loai-hang-hoa/
+         * Chọn hardcode mã hàng hoá loại Điện tử - Âm thanh
+         */
+        private String orderType = "140000";
     }
 }

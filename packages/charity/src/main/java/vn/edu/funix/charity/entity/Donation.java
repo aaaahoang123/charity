@@ -80,6 +80,8 @@ public class Donation {
     @Column(length = 50)
     private String lastUpdatedByUserId;
 
+    @Column(length = 50)
+    private String requesterIp;
     public void setCampaign(@NonNull Campaign campaign) {
         this.campaign = campaign;
         campaignId = campaign.getId();

@@ -31,6 +31,11 @@ vn:
           end-point: ${PAYMENT_MOMO_END_POINT:https://test-payment.momo.vn/v2/gateway/api/create}
           partner-code: ${PAYMENT_MOMO_PARTNER_CODE}
           secret-key: ${PAYMENT_MOMO_SECRET_KEY}
+        vn-pay:
+          end-point: ${PAYMENT_VNP_ENDPOINT:https://sandbox.vnpayment.vn}
+          terminal-code: ${PAYMENT_VNP_TERMINAL_CODE}
+          secret: ${PAYMENT_VNP_SECRET}
+          version: ${PAYMENT_VNP_VERSION:2.1.0}
 com:
   c4-soft:
     springaddons:
