@@ -2,7 +2,7 @@ import {forwardRef, useCallback, useEffect, useMemo, useState} from "react";
 import {Select, SelectProps} from "antd";
 import {useSession} from "next-auth/react";
 import {useService} from "@/app/core/http/components";
-import DonationService from "@/app/campaigns/[slug]/donate/donation-service";
+import DonationService from "@/app/donations/donation-service";
 import Donor from "@/app/core/model/donor";
 import kebabCase from 'lodash/kebabCase';
 

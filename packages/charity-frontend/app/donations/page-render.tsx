@@ -7,6 +7,7 @@ import Campaign from "@/app/core/model/campaign";
 import Link from "next/link";
 import {UserOutlined} from "@ant-design/icons";
 import DonationStatusTag from "@/app/donations/donation-status-tag";
+import DonationAction from "@/app/donations/donation-action";
 
 export interface DonationPageRenderProps {
     donations: Donation[];
@@ -61,11 +62,12 @@ const columns: TableProps<Donation>['columns'] = [
         title: 'Hành động',
         dataIndex: 'id',
         key: 'id',
-        render: () => {
-            return (
-                'ccc'
-            )
-        }
+        render: (id, record) => {
+            return record.status !== DonationStatus.REJECTED
+                && record.status !== DonationStatus.CONFIRMED
+                    ? <DonationAction donation={record} />
+                    : null;
+        },
     }
 ];
 

@@ -1,6 +1,6 @@
 'use client'
 
-import {ConfigProvider, Layout, theme} from "antd";
+import {App, ConfigProvider, Layout, theme} from "antd";
 import {SessionProvider, signIn, useSession} from "next-auth/react";
 import MainMenu from "@/app/layout/menu";
 import {PropsWithChildren, useEffect, useState} from "react";
@@ -65,11 +65,13 @@ export default function InnerLayout({children}: any) {
                     requiredMark: true,
                 }}
             >
-                <ClientServiceProvider>
-                    <InnerLayoutRenderer>
-                        {children}
-                    </InnerLayoutRenderer>
-                </ClientServiceProvider>
+                <App>
+                    <ClientServiceProvider>
+                        <InnerLayoutRenderer>
+                            {children}
+                        </InnerLayoutRenderer>
+                    </ClientServiceProvider>
+                </App>
             </ConfigProvider>
         </SessionProvider>
     )
