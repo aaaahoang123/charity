@@ -16,6 +16,9 @@ import DonorSelector from "@/app/campaigns/[slug]/donate/donor-selector";
 import Donor from "@/app/core/model/donor";
 import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
 import {Role} from "@/app/core/role";
+import {useSession} from "next-auth/react";
+import {sessionMatchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
+import {useRouter} from "next/navigation";
 
 const hasDifferenceDonorId = (oldData: any, newData: any) => oldData?.donorId !== newData?.donorId;
 
@@ -25,13 +28,15 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
     const [form] = Form.useForm();
     const [displayModal, setDisplayModal] = useState(false);
     const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>();
-
+    const { data: session } = useSession();
+    const router = useRouter();
     const initialValues = useMemo(() => {
         return {
             transactionProvider: TransactionProvider.TRANSFER,
             campaignSlug: campaign.slug,
         };
     }, [campaign]);
+    const slug = campaign.slug;
 
     const service = useService(DonationService);
 
@@ -72,13 +77,16 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
                 return;
             }
             const donation = await service.create(values);
+            if (sessionMatchAnyRoles(session, [Role.ROLE_ADMIN])) {
+                return router.push('/campaigns/' + slug);
+            }
             const paymentResponse = await service.getPaymentInfo(donation.data.id);
             setPaymentInfo(paymentResponse.data);
             handlePaymentInfo(paymentResponse.data);
         };
 
         handle();
-    }, [service, setDisplayModal, setPaymentInfo, paymentInfo]);
+    }, [service, setDisplayModal, setPaymentInfo, paymentInfo, session, router, slug]);
 
     return (
         <>
@@ -97,9 +105,17 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
                         >
                             <Row gutter={16}>
                                 <Col md={12}>
-                                    <Form.Item label="Hình thức" name={'transactionProvider'}>
-                                        <TransactionProviderSelector />
-                                    </Form.Item>
+                                    <ClientNeedAuth roles={[Role.ROLE_ANONYMOUS, Role.ROLE_USER]}>
+                                        <Form.Item label="Hình thức" name={'transactionProvider'}>
+                                            <TransactionProviderSelector />
+                                        </Form.Item>
+                                    </ClientNeedAuth>
+                                    <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
+                                        <Form.Item hidden={true} name={'transactionProvider'}>
+                                            <Input value={TransactionProvider.TRANSFER} />
+                                        </Form.Item>
+                                    </ClientNeedAuth>
+
                                     <Form.Item name={'campaignSlug'} hidden={true}>
                                         <Input />
                                     </Form.Item>
@@ -119,6 +135,18 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
                                     <Form.Item name={'message'} label={'Lời nhắn'}>
                                         <Input placeholder={'Lời nhắn đính kèm'} />
                                     </Form.Item>
+
+                                    <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
+                                        <Form.Item name={'transactionCode'}
+                                                   rules={[
+                                                       {required: true},
+                                                       { type: 'string', max: 50 }
+                                                   ]}
+                                                   label={'Mã giao dịch'}
+                                        >
+                                            <Input placeholder={'Mã giao dịch từ ngân hàng'} />
+                                        </Form.Item>
+                                    </ClientNeedAuth>
                                 </Col>
                                 <Col md={12}>
                                     <ClientNeedAuth roles={[Role.ROLE_USER]}>

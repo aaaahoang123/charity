@@ -18,6 +18,7 @@ export enum DonationStatus {
 interface Donation {
     id: number;
     amount: number;
+    amountStr: string;
     message: string;
     transactionCode: string;
     transactionProvider: TransactionProvider;

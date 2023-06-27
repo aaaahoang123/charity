@@ -21,6 +21,9 @@ public class DonationDto {
     @Enumerated(EnumType.STRING)
     private TransactionProvider transactionProvider;
 
+    @Length(max = 50)
+    private String transactionCode;
+
     private Integer donorId;
 
     @Length(max = 255)

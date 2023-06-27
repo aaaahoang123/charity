@@ -47,7 +47,7 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
 
 export default function InnerLayout({children}: any) {
     return (
-        <SessionProvider refetchInterval={140} refetchOnWindowFocus={true}>
+        <SessionProvider refetchInterval={90} refetchOnWindowFocus={true}>
             <ConfigProvider
                 theme={{
                     token: {

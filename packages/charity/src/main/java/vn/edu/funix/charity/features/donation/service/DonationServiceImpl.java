@@ -2,9 +2,15 @@ package vn.edu.funix.charity.features.donation.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.exception.BadRequestException;
+import vn.edu.funix.charity.common.security.Role;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.entity.Donor;
@@ -12,8 +18,10 @@ import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 import vn.edu.funix.charity.entity.enumerate.DonationStatus;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.donation.dto.DonationDto;
+import vn.edu.funix.charity.features.donation.dto.ListDonationParam;
 import vn.edu.funix.charity.features.donation.repository.DonationRepository;
 import vn.edu.funix.charity.features.donation.repository.DonorRepository;
+import vn.edu.funix.charity.features.donation.repository.spec.*;
 
 import java.util.Collection;
 
@@ -36,7 +44,6 @@ public class DonationServiceImpl implements DonationService {
         donation.setDonor(donor);
         donation.setCreatedByUserId(userId);
         donation.setLastUpdatedByUserId(userId);
-//        donation.setTransactionCode("TX" + System.currentTimeMillis());
         donation.setStatus(DonationStatus.INITIAL);
 
         return donationRepository.save(donation);
@@ -114,5 +121,42 @@ public class DonationServiceImpl implements DonationService {
     public Donation reject(Donation donation) {
         donation.setStatus(DonationStatus.REJECTED);
         return donationRepository.save(donation);
+    }
+
+    @Override
+    public Page<Donation> getProcessingDonations(ListDonationParam params, Pageable pageable) {
+        var spec = Specification.where(new DonationFetchRelations());
+
+        var isAdmin = Role.ADMIN.equals(params.getRole());
+
+        if (params.getStatus() != null) {
+            // Admin có thể xem toàn bộ các yêu cầu quyên góp để tiến hành duyệt
+            // Còn user bình thường chỉ có thể xem các quyên góp đã duyệt, dùng trong trang chi tiết đợt quyên góp.
+            if (isAdmin) {
+                spec = spec.and(new DonationHasStatus(params.getStatus()));
+            } else {
+                spec = spec.and(new DonationHasStatus(DonationStatus.CONFIRMED));
+            }
+        }
+
+        if (params.getCampaignId() != null) {
+            spec = spec.and(new DonationHasCampaignId(params.getCampaignId()));
+        }
+
+        if (params.getProvider() != null) {
+            spec = spec.and(new DonationHasProvider(params.getProvider()));
+        }
+
+        if (params.getTerm() != null) {
+            spec = spec.and(new DonationHasTerm(params.getTerm()));
+        }
+
+        var realPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("id").descending()
+        );
+
+        return donationRepository.findAll(spec, realPageable);
     }
 }

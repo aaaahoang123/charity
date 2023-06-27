@@ -37,6 +37,7 @@ public class Donation {
     @Column(length = 500)
     private String message;
 
+    @Column(length = 50)
     private String transactionCode;
 
     @Enumerated(EnumType.STRING)

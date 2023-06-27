@@ -2,6 +2,7 @@ package vn.edu.funix.charity.features.payment.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ public class PaymentRedirectController {
     private final ApplicationConfiguration appConfig;
 
     @GetMapping("/redirect/{id}/accept")
+    @Transactional
     public String processPayment(
             @PathVariable("id") Long id,
             @RequestParam Map<String, Object> body
@@ -50,6 +52,7 @@ public class PaymentRedirectController {
     }
 
     @GetMapping("/redirect/{id}/cancel")
+    @Transactional
     public String cancelPay(
             @PathVariable("id") Long id
     ) {
