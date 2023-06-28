@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.funix.charity.common.response.FormatWith;
 import vn.edu.funix.charity.common.security.Role;
+import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
@@ -26,7 +27,8 @@ public class CampaignPublicController {
     @GetMapping
     public Page<Campaign> list(
             ListCampaignParams params,
-            Pageable pageable
+            Pageable pageable,
+            @UserId String userId
     ) {
         var authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         params.setIgnoreStatus(CampaignStatus.INITIAL);
@@ -37,7 +39,7 @@ public class CampaignPublicController {
                 break;
             }
         }
-        return campaignService.list(params, pageable);
+        return campaignService.list(userId, params, pageable);
     }
 
     @GetMapping("/{slug}")

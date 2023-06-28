@@ -9,7 +9,7 @@ import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 
 public interface CampaignService {
     Campaign create(String userId, CreateCampaignRequestDto dto);
-    Page<Campaign> list(ListCampaignParams params, Pageable pageable);
+    Page<Campaign> list(String userId, ListCampaignParams params, Pageable pageable);
 
     Campaign detail(String slug);
 

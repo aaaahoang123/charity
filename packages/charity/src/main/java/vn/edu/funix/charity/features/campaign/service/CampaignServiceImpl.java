@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.exception.BadRequestException;
 import vn.edu.funix.charity.common.specification.FetchRelation;
+import vn.edu.funix.charity.common.specification.WhereHas;
 import vn.edu.funix.charity.common.util.DateTimeUtils;
 import vn.edu.funix.charity.common.util.StringToSlug;
 import vn.edu.funix.charity.entity.Campaign;
@@ -26,6 +27,7 @@ import vn.edu.funix.charity.features.campaign.repository.SubscriberRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -67,7 +69,7 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public Page<Campaign> list(ListCampaignParams params, Pageable pageable) {
+    public Page<Campaign> list(String userId, ListCampaignParams params, Pageable pageable) {
         Specification<Campaign> spec = Specification.where(new FetchRelation<>("organization"));
 
         if (params.getIgnoreStatus() != null) {
@@ -90,8 +92,8 @@ public class CampaignServiceImpl implements CampaignService {
             spec = spec.and(new CampaignHasStatus(params.getStatus()));
         }
 
-        if (params.isSubscribed()) {
-            // TODO: Return only subscribed
+        if (params.isSubscribed() && userId != null) {
+            spec = spec.and(new WhereHas<>("subscribers", List.of(new SubscriberHasUserId(userId))));
         }
 
         Pageable correctPageable = PageRequest.of(

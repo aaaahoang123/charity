@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.*;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -53,10 +56,6 @@ public class Campaign {
     @Column(insertable = false, updatable = false, nullable = false, name = "organization_id")
     private Integer organizationId;
 
-    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "organization_id", referencedColumnName = "id")
-    private Organization organization;
-
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
 
@@ -82,6 +81,15 @@ public class Campaign {
 
     @Column(nullable = false)
     private Integer totalDonations;
+
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "organization_id", referencedColumnName = "id")
+    private Organization organization;
+
+    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, mappedBy = "campaign")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<Subscriber> subscribers;
 
     public void setOrganization(Organization organization) {
         this.organization = organization;
