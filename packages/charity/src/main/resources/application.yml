@@ -7,12 +7,35 @@ vn:
     fu:
       app:
         debug: ${APP_DEBUG:false}
+        url: ${APP_URL:http://localhost:8080}
+        frontend-url: ${APP_FRONTEND_URL:http://localhost:3002}
       storage:
         gcs-key-file-path: ${GCS_KEY_FILE:gc.json}
         gcs-bucket: ${GCS_BUCKET}
         gcs-path-prefix: ${GCS_PATH_PREFIX}
         gcs-uri: ${GCS_URI}
-
+      payment:
+        transfer:
+          bank: ${PAYMENT_TRANSFER_BANK}
+          name: ${PAYMENT_TRANSFER_NAME}
+          number: ${PAYMENT_TRANSFER_NUMBER}
+          template-type: ${PAYMENT_TRANSFER_TEMPLATE:print}
+        paypal:
+          client-id: ${PAYMENT_PAYPAL_CLIENT}
+          client-secret: ${PAYMENT_PAYPAL_SECRET}
+          mode: ${PAYMENT_PAYPAL_MODE:sandbox}
+        currency:
+          token: ${PAYMENT_CURRENCY_API_TOKEN}
+        momo:
+          access-key: ${PAYMENT_MOMO_ACCESS_KEY}
+          end-point: ${PAYMENT_MOMO_END_POINT:https://test-payment.momo.vn/v2/gateway/api/create}
+          partner-code: ${PAYMENT_MOMO_PARTNER_CODE}
+          secret-key: ${PAYMENT_MOMO_SECRET_KEY}
+        vn-pay:
+          end-point: ${PAYMENT_VNP_ENDPOINT:https://sandbox.vnpayment.vn}
+          terminal-code: ${PAYMENT_VNP_TERMINAL_CODE}
+          secret: ${PAYMENT_VNP_SECRET}
+          version: ${PAYMENT_VNP_VERSION:2.1.0}
 com:
   c4-soft:
     springaddons:
@@ -26,7 +49,7 @@ com:
               - path: $.resource_access.*.roles
                 prefix: ROLE_
         permit-all:
-          - "/public**"
+          - "/public/**"
           - "/api/v1/public/**"
 
 

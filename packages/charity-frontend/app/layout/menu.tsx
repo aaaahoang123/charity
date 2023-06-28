@@ -2,15 +2,15 @@
 
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-    AppstoreOutlined,
+    DownOutlined,
     LoginOutlined,
     LogoutOutlined,
-    MailOutlined, PlusOutlined,
-    SettingOutlined,
-    UserOutlined
+    PlusOutlined,
+    SettingOutlined, TransactionOutlined,
+    UserSwitchOutlined
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Menu } from 'antd';
+import type {MenuProps} from 'antd';
+import {Menu} from 'antd';
 import {signIn, signOut, useSession} from "next-auth/react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
@@ -20,52 +20,52 @@ import {Role} from "@/app/core/role";
 type MenuClickEvent = Parameters<NonNullable<MenuProps['onClick']>>[0];
 
 const items: MenuProps['items'] = [
-    {
-        label: 'Navigation One',
-        key: 'mail',
-        icon: <MailOutlined />,
-    },
-    {
-        label: 'Navigation Two',
-        key: 'app',
-        icon: <AppstoreOutlined />,
-        disabled: true,
-    },
-    {
-        label: 'Navigation Three - Submenu',
-        key: 'SubMenu',
-        icon: <SettingOutlined />,
-        children: [
-            {
-                type: 'group',
-                label: 'Item 1',
-                children: [
-                    {
-                        label: 'Option 1',
-                        key: 'setting:1',
-                    },
-                    {
-                        label: 'Option 2',
-                        key: 'setting:2',
-                    },
-                ],
-            },
-            {
-                type: 'group',
-                label: 'Item 2',
-                children: [
-                    {
-                        label: 'Option 3',
-                        key: 'setting:3',
-                    },
-                    {
-                        label: 'Option 4',
-                        key: 'setting:4',
-                    },
-                ],
-            },
-        ],
-    },
+    // {
+    //     label: 'Navigation One',
+    //     key: 'mail',
+    //     icon: <MailOutlined />,
+    // },
+    // {
+    //     label: 'Navigation Two',
+    //     key: 'app',
+    //     icon: <AppstoreOutlined />,
+    //     disabled: true,
+    // },
+    // {
+    //     label: 'Navigation Three - Submenu',
+    //     key: 'SubMenu',
+    //     icon: <SettingOutlined />,
+    //     children: [
+    //         {
+    //             type: 'group',
+    //             label: 'Item 1',
+    //             children: [
+    //                 {
+    //                     label: 'Option 1',
+    //                     key: 'setting:1',
+    //                 },
+    //                 {
+    //                     label: 'Option 2',
+    //                     key: 'setting:2',
+    //                 },
+    //             ],
+    //         },
+    //         {
+    //             type: 'group',
+    //             label: 'Item 2',
+    //             children: [
+    //                 {
+    //                     label: 'Option 3',
+    //                     key: 'setting:3',
+    //                 },
+    //                 {
+    //                     label: 'Option 4',
+    //                     key: 'setting:4',
+    //                 },
+    //             ],
+    //         },
+    //     ],
+    // },
 ];
 
 const useMenuItems = () => {
@@ -78,17 +78,24 @@ const useMenuItems = () => {
         if (status === 'loading') return result;
 
         if (status === 'authenticated' && !(data as any)?.error) {
-            if (sessionMatchAnyRoles(data, [Role.ROLE_ADMIN])) {
-                result.push({
-                    label: (
-                        <Link href={'/campaigns/create'}>Đợt quyên góp</Link>
-                    ),
-                    key: '/campaigns/create',
-                    icon: <PlusOutlined />
-                })
+            if (sessionMatchAnyRoles(data, [Role.ROLE_ADMIN]) === true) {
+                result.push(
+                    {
+                        label: <Link href={'/donations'}>Duyệt thanh toán</Link>,
+                        key: '/donations',
+                        icon: <TransactionOutlined/>,
+                    },
+                    {
+                        label: (
+                            <Link href={'/campaigns/create'}>Đợt quyên góp</Link>
+                        ),
+                        key: '/campaigns/create',
+                        icon: <PlusOutlined/>
+                    }
+                )
             }
 
-            if (sessionMatchAnyRoles(data, [Role.REALM_ADMIN])) {
+            if (sessionMatchAnyRoles(data, [Role.REALM_ADMIN]) === true) {
                 const baseUrl = issuer.replace('realms', 'admin');
                 const realm = issuer.split('/').slice(-1);
                 result.push({
@@ -98,13 +105,14 @@ const useMenuItems = () => {
                         </a>
                     ),
                     key: 'user-management',
+                    icon: <UserSwitchOutlined />,
                 })
             }
 
             result.push({
                 label: user?.name,
                 key: 'username',
-                icon: <UserOutlined />,
+                icon: <DownOutlined />,
                 style: {
                     paddingRight: 0
                 },
@@ -116,12 +124,12 @@ const useMenuItems = () => {
                             </a>
                         ),
                         key: 'manage-account',
-                        icon: <SettingOutlined />,
+                        icon: <SettingOutlined/>,
                     },
                     {
                         label: 'Đăng xuất',
                         key: 'logout',
-                        icon: <LogoutOutlined />
+                        icon: <LogoutOutlined/>
                     }
                 ]
             });
@@ -131,7 +139,7 @@ const useMenuItems = () => {
         result.push({
             label: 'Đăng nhập/Đăng ký',
             key: 'login',
-            icon: <LoginOutlined />,
+            icon: <LoginOutlined/>,
             style: {
                 paddingRight: 0
             }
