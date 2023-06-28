@@ -16,4 +16,6 @@ public interface CampaignService {
     Campaign delete(String slug) throws BadRequestException;
 
     Campaign update(String slug, String userId, CreateCampaignRequestDto dto) throws BadRequestException;
+
+    Campaign triggerSubscribe(String userId, String slug);
 }
