@@ -18,11 +18,13 @@ const InnerDonationAction = ({donation}: DonationActionProps) => {
 
     const router = useRouter();
     const app = App.useApp();
+    const messageSuccess = app.message.success;
     const confirm = app.modal.confirm;
+    const warning = app.modal.warning;
     const onApprove = useCallback(() => {
         confirm({
             title: (
-                <>Bạn chắc chắn muốn xác nhận yêu cầu quyên góp mã {donation.id} (DNC_{donation.id}) của <b>{donation.donor?.name ?? 'Người ẩn danh'}</b> với số tiền {donation.amountStr} chứ?</>
+                <>Bạn chắc chắn muốn duyệt yêu cầu quyên góp mã {donation.id} (DNC_{donation.id}) của <b>{donation.donor?.name ?? 'Người ẩn danh'}</b> với số tiền {donation.amountStr} chứ?</>
             ),
             content: (
                 <Form form={form}>
@@ -44,13 +46,29 @@ const InnerDonationAction = ({donation}: DonationActionProps) => {
 
                     else return donationService.approve(donation.id, form.getFieldValue('transactionCode'))
                         .then((result) => {
+                            messageSuccess('Duyệt yêu cầu quyên góp thành công');
                             router.refresh();
                             resolve(result);
                         });
                 });
             }
+        });
+    }, [donation.id, donation.donor?.name, donation.amountStr, form, donationService, router, confirm, messageSuccess]);
+
+    const onReject = useCallback(() => {
+        warning({
+            title: <>Bạn chắc chắn muốn huỷ yêu cầu quyên góp mã {donation.id} (DNC_{donation.id}) của <b>{donation.donor?.name ?? 'Người ẩn danh'}</b> với số tiền {donation.amountStr} chứ?</>,
+            content: 'Nhấn đồng ý đồng nghĩa với huỷ giao yêu cầu quyên góp này',
+            onOk() {
+                return donationService.reject(donation.id)
+                    .then(response => {
+                        messageSuccess('Huỷ yêu cầu quyên góp thành công')
+                        router.refresh();
+                        return response;
+                    });
+            }
         })
-    }, [donation.id, donation.donor?.name, donation.amountStr, form, donationService, router, confirm]);
+    }, [donation.amountStr, donation.donor?.name, donation.id, donationService, router, warning]);
 
     return (
         <Space>
@@ -58,7 +76,9 @@ const InnerDonationAction = ({donation}: DonationActionProps) => {
                         onClick={onApprove}
             />
             <Divider type={'vertical'} />
-            <CloseOutlined className={'text-red-600 cursor-pointer'} />
+            <CloseOutlined className={'text-red-600 cursor-pointer'}
+                           onClick={onReject}
+            />
         </Space>
     );
 };

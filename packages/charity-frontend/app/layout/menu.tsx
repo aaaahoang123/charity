@@ -78,7 +78,7 @@ const useMenuItems = () => {
         if (status === 'loading') return result;
 
         if (status === 'authenticated' && !(data as any)?.error) {
-            if (sessionMatchAnyRoles(data, [Role.ROLE_ADMIN])) {
+            if (sessionMatchAnyRoles(data, [Role.ROLE_ADMIN]) === true) {
                 result.push(
                     {
                         label: <Link href={'/donations'}>Duyệt thanh toán</Link>,
@@ -95,7 +95,7 @@ const useMenuItems = () => {
                 )
             }
 
-            if (sessionMatchAnyRoles(data, [Role.REALM_ADMIN])) {
+            if (sessionMatchAnyRoles(data, [Role.REALM_ADMIN]) === true) {
                 const baseUrl = issuer.replace('realms', 'admin');
                 const realm = issuer.split('/').slice(-1);
                 result.push({

@@ -76,7 +76,8 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
                 return;
             }
             const donation = await service.create(values);
-            if (sessionMatchAnyRoles(session, [Role.ROLE_ADMIN])) {
+            if (sessionMatchAnyRoles(session, [Role.ROLE_ADMIN]) === true) {
+                console.log({session});
                 return router.push('/campaigns/' + slug);
             }
             const paymentResponse = await service.getPaymentInfo(donation.data.id);

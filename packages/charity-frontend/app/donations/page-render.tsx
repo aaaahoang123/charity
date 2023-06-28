@@ -2,12 +2,14 @@
 
 import Donation, {DonationStatus} from "@/app/core/model/donation";
 import {RestMeta} from "@/app/core/model/rest";
-import {Avatar, Button, Card, Divider, Popover, Space, Table, TableProps} from "antd";
+import {Avatar, Card, Divider, Popover, Space, Table, TableProps} from "antd";
 import Campaign from "@/app/core/model/campaign";
 import Link from "next/link";
-import {UserOutlined} from "@ant-design/icons";
+import {MailOutlined, PhoneOutlined, UserOutlined} from "@ant-design/icons";
 import DonationStatusTag from "@/app/donations/donation-status-tag";
 import DonationAction from "@/app/donations/donation-action";
+import DonationSearchBox from "@/app/donations/search-box";
+import Donor from "@/app/core/model/donor";
 
 export interface DonationPageRenderProps {
     donations: Donation[];
@@ -48,6 +50,32 @@ const columns: TableProps<Donation>['columns'] = [
         }
     },
     {
+        title: 'Người ủng hộ',
+        dataIndex: 'donor',
+        key: 'donor',
+        render(donor: Donor) {
+            return (
+                <>
+                    <span>
+                        <UserOutlined /> {donor?.name ?? 'Giấu tên'}
+                    </span>
+                    <Divider type={'vertical'} />
+                    <span>
+                        <PhoneOutlined /> {
+                        donor?.phoneNumber?.length ? <a href={'tel:' + donor.phoneNumber}>{donor.phoneNumber}</a> : 'Chưa rõ'
+                    }
+                    </span>
+                    <Divider type={'vertical'} />
+                    <span>
+                        <MailOutlined /> {
+                        donor?.email?.length ? <a href={'mailto:' + donor.email}>{donor.email}</a> : 'Chưa rõ'
+                    }
+                    </span>
+                </>
+            );
+        }
+    },
+    {
         title: 'Số tiền',
         dataIndex: 'amountStr',
         key: 'amountStr',
@@ -75,7 +103,12 @@ const DonationPageRender = ({donations, pagination}: DonationPageRenderProps) =>
     console.log(donations, pagination);
     return (
         <>
-            <Card title={'Danh sách giao dịch'}>
+            <Card>
+                <DonationSearchBox />
+            </Card>
+            <Card title={'Danh sách giao dịch'}
+                  className={'mt-2'}
+            >
                 <Table dataSource={donations}
                        columns={columns}
                        rowKey={'id'}

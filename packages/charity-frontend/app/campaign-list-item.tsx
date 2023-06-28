@@ -83,13 +83,18 @@ const CampaignItem = ({ campaign, displayActions, title }: CampaignItemProps) =>
                         {
                             displayActions ? (
                                 <>
-                                    <ClientNeedAuth roles={[Role.ROLE_ANONYMOUS, Role.ROLE_USER]}>
-                                        <Button size={'small'}>
-                                            <Link href={`/campaigns/${campaign.slug}/donate`}>
-                                                Quyên góp
-                                            </Link>
-                                        </Button>
-                                    </ClientNeedAuth>
+                                    {
+                                        campaign.status === CampaignStatus.OPENING
+                                            ? <Button size={'small'}
+                                                      className={'mb-1'}
+                                                      type={'primary'}
+                                            >
+                                                <Link href={`/campaigns/${campaign.slug}/donate`}>
+                                                    Quyên góp
+                                                </Link>
+                                            </Button>
+                                            : null
+                                    }
                                     <ClientNeedAuth roles={[Role.ROLE_ADMIN]}>
                                         {
                                             campaign.status === CampaignStatus.INITIAL

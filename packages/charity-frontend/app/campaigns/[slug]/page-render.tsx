@@ -1,16 +1,16 @@
 'use client';
 
-import Campaign from "@/app/core/model/campaign";
+import Campaign, {CampaignStatus} from "@/app/core/model/campaign";
 import ReactMarkdown from "react-markdown";
-import {Avatar, Button, Card, Carousel, Col, Divider, message, Progress, Row, Space, Statistic, App} from "antd";
+import {Avatar, Button, Card, Carousel, Col, Divider, message, Progress, Row, Space, Statistic} from "antd";
 import Image from "next/image";
 import chunk from 'lodash/chunk';
 import {useEffect, useMemo} from "react";
 import styles from "@/app/page-render.module.scss";
 import {UserOutlined} from "@ant-design/icons";
-import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {useSearchParamsObject} from "@/app/common/util/use-search-params-object";
+import Link from "next/link";
 
 export interface ServerQueryParams {
     success?: string;
@@ -123,12 +123,15 @@ const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
                                 <Statistic className={styles.statistic} title="Thời hạn còn" value={`${campaign.daysRemain} ngày`}/>
                             </Col>
                         </Row>
-
-                        <Button type={'primary'} className={'w-full'} size={'large'}>
-                            <Link href={`${pathname}/donate`}>
-                                Quyên góp
-                            </Link>
-                        </Button>
+                        {
+                            campaign.status === CampaignStatus.OPENING
+                                ? <Link href={`${pathname}/donate`}>
+                                    <Button type={'primary'} className={'w-full'} size={'large'}>
+                                        Quyên góp
+                                    </Button>
+                                </Link>
+                                : null
+                        }
 
                         <Divider type={'horizontal'} />
 

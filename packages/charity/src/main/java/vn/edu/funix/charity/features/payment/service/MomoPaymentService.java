@@ -41,6 +41,7 @@ public class MomoPaymentService implements PaymentService {
         String requestId = String.valueOf(System.currentTimeMillis());
 //        String requestType = "captureWallet";
         String requestType = "payWithATM";
+//        String requestType = "payWithVTS";
         String orderId = generateOrderId(donation);
         Map<String, String> data = new HashMap<>();
 

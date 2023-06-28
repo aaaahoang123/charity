@@ -129,14 +129,10 @@ public class DonationServiceImpl implements DonationService {
 
         var isAdmin = Role.ADMIN.equals(params.getRole());
 
-        if (params.getStatus() != null) {
-            // Admin có thể xem toàn bộ các yêu cầu quyên góp để tiến hành duyệt
-            // Còn user bình thường chỉ có thể xem các quyên góp đã duyệt, dùng trong trang chi tiết đợt quyên góp.
-            if (isAdmin) {
-                spec = spec.and(new DonationHasStatus(params.getStatus()));
-            } else {
-                spec = spec.and(new DonationHasStatus(DonationStatus.CONFIRMED));
-            }
+        if (!isAdmin) {
+            spec = spec.and(new DonationHasStatus(DonationStatus.CONFIRMED));
+        } else if (params.getStatus() != null){
+            spec = spec.and(new DonationHasStatus(params.getStatus()));
         }
 
         if (params.getCampaignId() != null) {
