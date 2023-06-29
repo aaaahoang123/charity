@@ -95,7 +95,7 @@ const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
 
     const pathname = usePathname();
 
-    const shareUrl = location.href;
+    const shareUrl = window?.location?.href;
 
     return (
         <>
@@ -125,6 +125,9 @@ const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
                     <LinkedinOutlined style={{ color: '#007fb1', fontSize: '1.5rem' }} />
                 </LinkedinShareButton>
             </Space>
+            <div className={'float-right'}>
+                ccc
+            </div>
             {renderCarousel(chunkedImages)}
             <Row gutter={16} className={'mt-4'}>
                 <Col md={16}>

@@ -22,5 +22,5 @@ public class ListCampaignParams {
 
     private String term;
 
-    private boolean isSubscribed = false;
+    private Boolean isSubscribed = false;
 }

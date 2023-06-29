@@ -92,7 +92,7 @@ public class CampaignServiceImpl implements CampaignService {
             spec = spec.and(new CampaignHasStatus(params.getStatus()));
         }
 
-        if (params.isSubscribed() && userId != null) {
+        if (params.getIsSubscribed() && userId != null) {
             spec = spec.and(new WhereHas<>("subscribers", List.of(new SubscriberHasUserId(userId))));
         }
 

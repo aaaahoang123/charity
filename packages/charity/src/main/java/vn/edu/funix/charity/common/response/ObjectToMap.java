@@ -1,5 +1,6 @@
 package vn.edu.funix.charity.common.response;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,10 @@ public class ObjectToMap {
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                result.put(field.getName(), field.get(obj));
+                var value = field.get(obj);
+                if (Hibernate.isInitialized(value)) {
+                    result.put(field.getName(), value);
+                }
             } catch (IllegalAccessException ex) {
                 logger.warn("Access failure at field: " + field.getName() + " of object: " + obj.getClass() + "@" + obj);
             }

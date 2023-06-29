@@ -35,7 +35,7 @@ public class CampaignPublicController {
         for (var authority : authorities) {
             if (authority.getAuthority().equals(Role.ADMIN)) {
                 params.setIgnoreStatus(null);
-                params.setSubscribed(false);
+                params.setIsSubscribed(false);
                 break;
             }
         }
