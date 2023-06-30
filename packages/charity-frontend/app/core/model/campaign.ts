@@ -30,6 +30,7 @@ interface Campaign {
     totalReceivedAmount: number;
     totalDonations: number;
     totalReceivedAmountStr: string;
+    isSubscribed: boolean;
 }
 
 export default Campaign;

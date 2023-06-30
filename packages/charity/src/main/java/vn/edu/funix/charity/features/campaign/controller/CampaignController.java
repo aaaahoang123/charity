@@ -43,4 +43,12 @@ public class CampaignController {
     ) {
         return campaignService.update(slug, userId, dto);
     }
+
+    @GetMapping("/{slug}/subscribe")
+    public Campaign subscribe(
+            @PathVariable("slug") String slug,
+            @UserId String userId
+    ) {
+        return campaignService.triggerSubscribe(userId, slug);
+    }
 }

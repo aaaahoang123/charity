@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.*;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,61 +30,66 @@ import java.time.LocalDateTime;
 public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    protected Integer id;
 
     @Column(nullable = false)
-    private String title;
+    protected String title;
 
     @Column(nullable = false, unique = true, length = 300)
-    private String slug;
+    protected String slug;
 
     @Column(nullable = false, length = 500)
-    private String description;
+    protected String description;
 
     @Column(nullable = false, columnDefinition = "text")
-    private String content;
+    protected String content;
 
     @Column(nullable = false)
-    private LocalDate deadline;
+    protected LocalDate deadline;
 
     @Column(nullable = false)
-    private Long targetAmount;
+    protected Long targetAmount;
 
     @Column(length = 2048)
-    private String images;
+    protected String images;
 
     @Column(insertable = false, updatable = false, nullable = false, name = "organization_id")
-    private Integer organizationId;
-
-    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "organization_id", referencedColumnName = "id")
-    private Organization organization;
+    protected Integer organizationId;
 
     @Enumerated(EnumType.STRING)
-    private CampaignStatus status;
+    protected CampaignStatus status;
 
     @CreationTimestamp
     @Column(columnDefinition = "timestamp", updatable = false)
-    private LocalDateTime createdAt;
+    protected LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(columnDefinition = "timestamp")
-    private LocalDateTime updatedAt;
+    protected LocalDateTime updatedAt;
 
     @Column(columnDefinition = "timestamp")
-    private LocalDateTime deletedAt;
+    protected LocalDateTime deletedAt;
 
     @Column(nullable = false, updatable = false)
-    private String createdByUserId;
+    protected String createdByUserId;
 
     @Column(nullable = false)
-    private String lastUpdatedByUserId;
+    protected String lastUpdatedByUserId;
 
     @Column(nullable = false)
-    private Long totalReceivedAmount;
+    protected Long totalReceivedAmount;
 
     @Column(nullable = false)
-    private Integer totalDonations;
+    protected Integer totalDonations;
+
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "organization_id", referencedColumnName = "id")
+    protected Organization organization;
+
+    @OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, mappedBy = "campaign")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    protected Set<Subscriber> subscribers;
 
     public void setOrganization(Organization organization) {
         this.organization = organization;

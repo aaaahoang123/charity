@@ -12,18 +12,23 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.exception.BadRequestException;
 import vn.edu.funix.charity.common.specification.FetchRelation;
+import vn.edu.funix.charity.common.specification.WhereHas;
 import vn.edu.funix.charity.common.util.DateTimeUtils;
 import vn.edu.funix.charity.common.util.StringToSlug;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.Organization;
+import vn.edu.funix.charity.entity.Subscriber;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.campaign.repository.OrganizationRepository;
+import vn.edu.funix.charity.features.campaign.repository.SubscriberRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,6 +40,7 @@ public class CampaignServiceImpl implements CampaignService {
 
     private final CampaignRepository campaignRepository;
     private final OrganizationRepository organizationRepository;
+    private final SubscriberRepository subscriberRepository;
 
     @Override
     public Campaign create(String userId, CreateCampaignRequestDto dto) {
@@ -64,7 +70,7 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public Page<Campaign> list(ListCampaignParams params, Pageable pageable) {
+    public Page<Campaign> list(String userId, ListCampaignParams params, Pageable pageable) {
         Specification<Campaign> spec = Specification.where(new FetchRelation<>("organization"));
 
         if (params.getIgnoreStatus() != null) {
@@ -87,8 +93,8 @@ public class CampaignServiceImpl implements CampaignService {
             spec = spec.and(new CampaignHasStatus(params.getStatus()));
         }
 
-        if (params.isSubscribed()) {
-            // TODO: Return only subscribed
+        if (params.getIsSubscribed() && userId != null) {
+            spec = spec.and(new WhereHas<>("subscribers", List.of(new SubscriberHasUserId(userId))));
         }
 
         Pageable correctPageable = PageRequest.of(
@@ -166,6 +172,25 @@ public class CampaignServiceImpl implements CampaignService {
         logger.debug("Found organization with id " + organization.getId() + " and title: " + organization.getName());
 
         return organization;
+    }
 
+    @Override
+    public Campaign triggerSubscribe(String userId, String slug) {
+        var campaign = detail(slug);
+        var subscribedOptional = subscriberRepository.findSubscriberByUserIdAndCampaignId(userId, campaign.getId());
+        if (subscribedOptional.isPresent()) {
+            subscriberRepository.delete(subscribedOptional.get());
+        } else {
+            var subscriber = new Subscriber();
+            subscriber.setCampaign(campaign);
+            subscriber.setUserId(userId);
+            subscriberRepository.save(subscriber);
+        }
+        return campaign;
+    }
+
+    @Override
+    public List<Subscriber> findSubscriberOfUserWithCampaigns(String userId, Collection<Integer> campaignIds) {
+        return subscriberRepository.findAllByUserIdAndCampaignIdIn(userId, campaignIds);
     }
 }

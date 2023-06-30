@@ -6,7 +6,7 @@ import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import vn.edu.funix.charity.common.response.Formatter;
-import vn.edu.funix.charity.common.response.ObjectToMap;
+import vn.edu.funix.charity.common.response.ObjectUtils;
 import vn.edu.funix.charity.common.util.CurrencyFormatter;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.features.storage.StorageService;
@@ -22,7 +22,7 @@ import java.util.Map;
 @Component
 @AllArgsConstructor
 public class CampaignFormatter implements Formatter, CurrencyFormatter {
-    private final ObjectToMap objectToMap;
+    private final ObjectUtils objectToMap;
     private final StorageService storageService;
     private final OrganizationFormatter orgFormatter;
     @Override
@@ -30,7 +30,7 @@ public class CampaignFormatter implements Formatter, CurrencyFormatter {
         if (!(object instanceof Campaign campaign))
             return object;
 
-        Map<String, Object> result = objectToMap.compile(object);
+        Map<String, Object> result = objectToMap.objectToMap(object);
 
         Collection<String> images = List.of();
         Collection<String> imageUrls = List.of();

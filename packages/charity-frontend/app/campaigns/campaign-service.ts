@@ -14,6 +14,11 @@ class CampaignService extends BaseCRUDService<Campaign> {
     protected getDetailPath(id: string | number): string {
         return this.getListPath() + `/${id}`;
     }
+
+    triggerSubscribe(slug: string) {
+        return this.axios.get<Rest<Campaign>>(`/api/v1/campaigns/${slug}/subscribe`)
+            .then(({data}) => data);
+    }
 }
 
 export default CampaignService;

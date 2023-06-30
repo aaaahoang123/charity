@@ -10,11 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.funix.charity.common.response.FormatWith;
 import vn.edu.funix.charity.common.security.Role;
+import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
+import vn.edu.funix.charity.features.campaign.dto.CampaignWithSubscribedDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.formatter.CampaignFormatter;
 import vn.edu.funix.charity.features.campaign.service.CampaignService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/public/campaigns")
@@ -26,22 +30,37 @@ public class CampaignPublicController {
     @GetMapping
     public Page<Campaign> list(
             ListCampaignParams params,
-            Pageable pageable
+            Pageable pageable,
+            @UserId String userId
     ) {
         var authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         params.setIgnoreStatus(CampaignStatus.INITIAL);
         for (var authority : authorities) {
             if (authority.getAuthority().equals(Role.ADMIN)) {
                 params.setIgnoreStatus(null);
-                params.setSubscribed(false);
+                params.setIsSubscribed(false);
                 break;
             }
         }
-        return campaignService.list(params, pageable);
+        return campaignService.list(userId, params, pageable);
     }
 
     @GetMapping("/{slug}")
-    public Campaign detail(@PathVariable("slug") String slug) {
-        return campaignService.detail(slug);
+    public Campaign detail(
+            @PathVariable("slug") String slug,
+            @UserId String userId
+    ) {
+        var campaign = campaignService.detail(slug);
+
+        if (userId != null) {
+            var subscribed = campaignService.findSubscriberOfUserWithCampaigns(userId, List.of(campaign.getId()));
+            if (!subscribed.isEmpty()) {
+                var dto = new CampaignWithSubscribedDto(campaign);
+                dto.setSubscribed(true);
+                return dto;
+            }
+        }
+
+        return campaign;
     }
 }

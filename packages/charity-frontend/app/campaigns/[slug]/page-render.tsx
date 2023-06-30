@@ -5,12 +5,17 @@ import ReactMarkdown from "react-markdown";
 import {Avatar, Button, Card, Carousel, Col, Divider, message, Progress, Row, Space, Statistic} from "antd";
 import Image from "next/image";
 import chunk from 'lodash/chunk';
-import {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo} from "react";
 import styles from "@/app/page-render.module.scss";
-import {UserOutlined} from "@ant-design/icons";
+import {FacebookOutlined, LinkedinOutlined, RedditOutlined, UserOutlined, WhatsAppOutlined} from "@ant-design/icons";
 import {usePathname, useRouter} from "next/navigation";
 import {useSearchParamsObject} from "@/app/common/util/use-search-params-object";
 import Link from "next/link";
+import {FacebookShareButton, LinkedinShareButton, RedditShareButton, WhatsappShareButton,} from 'next-share';
+import TimeDisplay from "@/app/common/component/time-display";
+import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
+import {Role} from "@/app/core/role";
+import SubscribeButton from "@/app/campaigns/[slug]/subscribe-button";
 
 export interface ServerQueryParams {
     success?: string;
@@ -77,6 +82,7 @@ const ServerMessageHandler = () => {
 };
 
 const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
+    console.log(campaign);
     const chunkedImages = useMemo(() => {
         if (!campaign.imageUrls?.length) {
             return [] as string[][];
@@ -87,12 +93,48 @@ const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
     const percent = useMemo(() => Math.round(campaign.totalReceivedAmount / campaign.targetAmount * 100), [campaign]);
 
     const pathname = usePathname();
+
+    const shareUrl = window?.location?.href;
+
     return (
         <>
             <ServerMessageHandler />
             <h1 className={'text-2xl'}>{campaign.title}</h1>
             <div className={'text-lg'}>{campaign.description}</div>
-            <div className={'mt-2'}>{campaign.createdAt}</div>
+            <div className={'mt-2'}>
+                <TimeDisplay time={campaign.createdAt}
+                             className={'italic'} />
+            </div>
+            <div className={'inline'}>
+                <div className={'float-left'}>
+                    <h3 className={'mb-1'}>Chia sẻ với bạn bè</h3>
+                    <Space>
+                        <FacebookShareButton
+                            url={shareUrl} >
+                            <FacebookOutlined style={{ color: '#3b5998', fontSize: '1.5rem' }} />
+                        </FacebookShareButton>
+                        <RedditShareButton
+                            url={shareUrl} >
+                            <RedditOutlined style={{ color: '#ff4500', fontSize: '1.5rem' }} />
+                        </RedditShareButton>
+                        <WhatsappShareButton
+                            url={shareUrl} >
+                            <WhatsAppOutlined style={{ color: '#25D366', fontSize: '1.5rem' }} />
+                        </WhatsappShareButton>
+                        <LinkedinShareButton
+                            url={shareUrl} >
+                            <LinkedinOutlined style={{ color: '#007fb1', fontSize: '1.5rem' }} />
+                        </LinkedinShareButton>
+                    </Space>
+                </div>
+                <ClientNeedAuth roles={[Role.ROLE_USER]}>
+                    <div className={'ml-3 float-left'}>
+                        <h3 className={'mb-1'}>&nbsp;</h3>
+                        <SubscribeButton campaign={campaign} size={'small'} />
+                    </div>
+                </ClientNeedAuth>
+            </div>
+            <div className={'clear-both'}></div>
             {renderCarousel(chunkedImages)}
             <Row gutter={16} className={'mt-4'}>
                 <Col md={16}>

@@ -68,7 +68,7 @@ const InnerDonationAction = ({donation}: DonationActionProps) => {
                     });
             }
         })
-    }, [donation.amountStr, donation.donor?.name, donation.id, donationService, router, warning]);
+    }, [donation.amountStr, donation.donor?.name, donation.id, donationService, messageSuccess, router, warning]);
 
     return (
         <Space>
