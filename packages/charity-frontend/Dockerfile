@@ -28,6 +28,8 @@ LABEL author="hoangdo"
 
 WORKDIR /app
 
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 COPY --from=BUILD /app/public ./public
 COPY --from=BUILD /app/next.config.js ./
 

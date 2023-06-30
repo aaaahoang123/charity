@@ -84,6 +84,8 @@ services:
       context: ./charity
     env_file:
       - charity/.env
+    environment:
+      - TZ=${WORKSPACE_TIMEZONE}
     networks:
       - frontend
       - backend
@@ -95,6 +97,8 @@ services:
       context: ./charity-frontend
     env_file:
       - charity-frontend/.env
+    environment:
+      - TZ=${WORKSPACE_TIMEZONE}
     networks:
       - frontend
       - backend
