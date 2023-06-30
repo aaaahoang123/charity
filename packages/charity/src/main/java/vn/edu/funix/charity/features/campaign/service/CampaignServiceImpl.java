@@ -27,6 +27,7 @@ import vn.edu.funix.charity.features.campaign.repository.SubscriberRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -186,5 +187,10 @@ public class CampaignServiceImpl implements CampaignService {
             subscriberRepository.save(subscriber);
         }
         return campaign;
+    }
+
+    @Override
+    public List<Subscriber> findSubscriberOfUserWithCampaigns(String userId, Collection<Integer> campaignIds) {
+        return subscriberRepository.findAllByUserIdAndCampaignIdIn(userId, campaignIds);
     }
 }

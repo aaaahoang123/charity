@@ -13,9 +13,12 @@ import vn.edu.funix.charity.common.security.Role;
 import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
+import vn.edu.funix.charity.features.campaign.dto.CampaignWithSubscribedDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.formatter.CampaignFormatter;
 import vn.edu.funix.charity.features.campaign.service.CampaignService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/public/campaigns")
@@ -43,7 +46,21 @@ public class CampaignPublicController {
     }
 
     @GetMapping("/{slug}")
-    public Campaign detail(@PathVariable("slug") String slug) {
-        return campaignService.detail(slug);
+    public Campaign detail(
+            @PathVariable("slug") String slug,
+            @UserId String userId
+    ) {
+        var campaign = campaignService.detail(slug);
+
+        if (userId != null) {
+            var subscribed = campaignService.findSubscriberOfUserWithCampaigns(userId, List.of(campaign.getId()));
+            if (!subscribed.isEmpty()) {
+                var dto = new CampaignWithSubscribedDto(campaign);
+                dto.setSubscribed(true);
+                return dto;
+            }
+        }
+
+        return campaign;
     }
 }

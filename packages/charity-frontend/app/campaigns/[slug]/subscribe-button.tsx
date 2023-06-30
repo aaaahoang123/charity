@@ -24,8 +24,14 @@ const InnerSubscribeButton = ({campaign, onClick, ...props}: SubscribeButtonProp
         <Button {...props}
                 ref={ref}
                 onClick={onClickWrapper}
+                type={campaign.isSubscribed ? 'default' : 'primary'}
         >
-            <BellOutlined /> Theo dõi
+            {
+                campaign.isSubscribed
+                    ? 'Bỏ theo dõi'
+                    : 'Theo dõi'
+            }
+
         </Button>
     );
 };
