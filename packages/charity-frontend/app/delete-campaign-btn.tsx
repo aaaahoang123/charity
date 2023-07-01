@@ -6,6 +6,9 @@ import {useService} from "@/app/core/http/components";
 import CampaignService from "@/app/campaigns/campaign-service";
 import {useCallback} from "react";
 import {useRouter} from 'next/navigation';
+import Logger from "js-logger";
+
+const logger = Logger.get('DeleteCampaignBtn');
 
 export interface DeleteCampaignBtnProps {
     campaign: Campaign;
@@ -21,7 +24,7 @@ const DeleteCampaignBtn = ({campaign}: DeleteCampaignBtnProps) => {
                 router.refresh();
             })
             .catch(e => {
-                console.log(e);
+                logger.error(e);
                 message.error(e.message);
             });
     }, [service, campaign.slug, router]);

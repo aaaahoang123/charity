@@ -46,7 +46,7 @@ const CampaignItem = ({ campaign, displayActions, title }: CampaignItemProps) =>
             </Link>
             <Link href={`/campaigns/${campaign.slug}`} className={'flex-1 flex'}>
                 <div
-                    className={'flex-1 px-4 pb-3 pt-4 font-bold text-xl text-gray-600 hover:text-green-700 aspect-auto'}>
+                    className={'flex-1 px-4 pb-3 pt-4 font-bold text-lg text-gray-600 hover:text-green-700 aspect-auto'}>
                     {campaign.title}
                 </div>
             </Link>

@@ -10,6 +10,9 @@ import DonationStatusTag from "@/app/donations/donation-status-tag";
 import DonationAction from "@/app/donations/donation-action";
 import DonationSearchBox from "@/app/donations/search-box";
 import Donor from "@/app/core/model/donor";
+import Logger from "js-logger";
+
+const logger = Logger.get('DonationsPage');
 
 export interface DonationPageRenderProps {
     donations: Donation[];
@@ -100,7 +103,7 @@ const columns: TableProps<Donation>['columns'] = [
 ];
 
 const DonationPageRender = ({donations, pagination}: DonationPageRenderProps) => {
-    console.log(donations, pagination);
+    logger.info(donations, pagination);
     return (
         <>
             <Card>

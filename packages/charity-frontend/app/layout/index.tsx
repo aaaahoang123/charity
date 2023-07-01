@@ -1,8 +1,13 @@
 import '../globals.scss'
 import {Inter} from 'next/font/google'
 import InnerLayout from "@/app/layout/inner-layout";
+import Logger from "js-logger";
 
 const inter = Inter({subsets: ['latin']})
+
+const handler = Logger.createDefaultHandler();
+Logger.setHandler(handler);
+Logger.setLevel((Logger as any)[process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'DEBUG']);
 
 export const metadata = {
     title: "Let's Charity",

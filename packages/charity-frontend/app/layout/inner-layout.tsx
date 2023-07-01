@@ -1,15 +1,23 @@
 'use client'
 
 import {App, ConfigProvider, Layout, theme} from "antd";
-import {SessionProvider, signIn, useSession} from "next-auth/react";
+import {SessionProvider, signOut, useSession} from "next-auth/react";
 import MainMenu from "@/app/layout/menu";
 import {PropsWithChildren, useEffect, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import validateMessages from './validateMessage.json';
 import {ClientServiceProvider} from "@/app/core/http/components";
+import {RE_FETCH_INTERVAL} from "@/app/api/auth/[...nextauth]/route";
+import Logger from "js-logger";
 
 const { Header, Content, Footer } = Layout;
+const handler = Logger.createDefaultHandler();
+Logger.setHandler(handler);
+const logLevel = process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'DEBUG';
+Logger.setLevel((Logger as any)[logLevel]);
+
+const logger = Logger.get('Layout');
 
 const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
     const [mounted, setMounted] = useState(false);
@@ -18,13 +26,14 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
         token: { controlHeightLG },
     } = theme.useToken();
 
-    // const {data: session} = useSession();
+    const {data: session} = useSession();
 
-    // useEffect(() => {
-    //     if ((session as any)?.error === 'RefreshAccessTokenError') {
-    //         signIn('keycloak');
-    //     }
-    // }, [session]);
+    useEffect(() => {
+        logger.info('AccessToken: ' + (session as any)?.accessToken);
+        if ((session as any)?.error === 'RefreshAccessTokenError') {
+            signOut();
+        }
+    }, [session]);
 
     return (
         <Layout style={{ visibility: !mounted ? 'hidden' : 'visible' }}>
@@ -41,13 +50,14 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
                     {children}
                 </div>
             </Content>
+            <Footer style={{ textAlign: 'center' }}>Hoàng Đỗ ©2023 Created by Ant UED | Powered by FPT Funix</Footer>
         </Layout>
     )
 }
 
 export default function InnerLayout({children}: any) {
     return (
-        <SessionProvider refetchInterval={90} refetchOnWindowFocus={true}>
+        <SessionProvider refetchInterval={RE_FETCH_INTERVAL} refetchOnWindowFocus={true}>
             <ConfigProvider
                 theme={{
                     token: {

@@ -8,7 +8,8 @@ import {TransactionProvider} from "@/app/core/model/donation";
 import InputMoney from "@/app/common/component/input-money";
 import {ExclamationCircleFilled, SendOutlined} from "@ant-design/icons";
 import {useService} from "@/app/core/http/components";
-import DonationService from "@/app/donations/donation-service";import PaymentInfo, {PaymentOpenType} from "@/app/core/model/payment-info";
+import DonationService from "@/app/donations/donation-service";
+import PaymentInfo, {PaymentOpenType} from "@/app/core/model/payment-info";
 import Image from "next/image";
 import CampaignItem from "@/app/campaign-list-item";
 import DonorSelector from "@/app/campaigns/[slug]/donate/donor-selector";
@@ -18,6 +19,9 @@ import {Role} from "@/app/core/role";
 import {useSession} from "next-auth/react";
 import {sessionMatchAnyRoles} from "@/app/api/auth/[...nextauth]/route";
 import {useRouter} from "next/navigation";
+import Logger from "js-logger";
+
+const logger = Logger.get('DonatePage');
 
 const hasDifferenceDonorId = (oldData: any, newData: any) => oldData?.donorId !== newData?.donorId;
 
@@ -77,7 +81,6 @@ const DonateRender = ({ campaign }: { campaign: Campaign }) => {
             }
             const donation = await service.create(values);
             if (sessionMatchAnyRoles(session, [Role.ROLE_ADMIN]) === true) {
-                console.log({session});
                 return router.push('/campaigns/' + slug);
             }
             const paymentResponse = await service.getPaymentInfo(donation.data.id);

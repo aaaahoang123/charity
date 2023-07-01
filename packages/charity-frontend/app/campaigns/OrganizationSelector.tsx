@@ -6,6 +6,9 @@ import {useService} from "@/app/core/http/components";
 import OrganizationService from "@/app/campaigns/organization-service";
 import debounce from 'lodash/debounce';
 import Organization from "@/app/core/model/organization";
+import Logger from "js-logger";
+
+const logger = Logger.get('OrganizationSelector');
 
 export interface OrganizationSelectorProps extends Omit<SelectProps, 'options' | 'filterOption'> {
     onSelectObject?: (_: any) => any;
@@ -37,7 +40,7 @@ const OrganizationSelector = ({ placeholder, showArrow, onSearch, onChange, onSe
                 setOptions(options);
                 setFetching(false);
             })
-            .catch(e => console.log(e));
+            .catch(e => logger.error(e));
     }, [service, setData, setOptions, setFetching]);
 
     useEffect(() => {

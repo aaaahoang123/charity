@@ -82,7 +82,6 @@ const ServerMessageHandler = () => {
 };
 
 const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
-    console.log(campaign);
     const chunkedImages = useMemo(() => {
         if (!campaign.imageUrls?.length) {
             return [] as string[][];
@@ -94,7 +93,7 @@ const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
 
     const pathname = usePathname();
 
-    const shareUrl = window?.location?.href;
+    const shareUrl = global?.window?.location?.href;
 
     return (
         <>

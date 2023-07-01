@@ -19,6 +19,9 @@ dependencies:
   jose:
     specifier: ^4.14.4
     version: 4.14.4
+  js-logger:
+    specifier: ^1.6.1
+    version: 1.6.1
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
@@ -2193,6 +2196,10 @@ packages:
 
   /jose@4.14.4:
     resolution: {integrity: sha512-j8GhLiKmUAh+dsFXlX1aJCbt5KMibuKb+d7j1JaOJG6s2UjX1PQlW+OKB/sD4a/5ZYF4RcmYmLSndOoU3Lt/3g==}
+    dev: false
+
+  /js-logger@1.6.1:
+    resolution: {integrity: sha512-yTgMCPXVjhmg28CuUH8CKjU+cIKL/G+zTu4Fn4lQxs8mRFH/03QTNvEFngcxfg/gRDiQAOoyCKmMTOm9ayOzXA==}
     dev: false
 
   /js-tokens@4.0.0:
