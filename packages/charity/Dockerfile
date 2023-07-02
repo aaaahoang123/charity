@@ -1,5 +1,5 @@
 # BUILD IMAGE
-FROM openjdk:17 as BUILD
+FROM eclipse-temurin:17 as BUILD
 
 COPY . /app
 WORKDIR /app
@@ -9,7 +9,7 @@ ENV TZ=Asia/Singapore
 RUN ./mvnw package -Dmaven.test.skip=true
 
 # Production image
-FROM openjdk:17 as PRODUCTION
+FROM eclipse-temurin:17-jre as PRODUCTION
 
 WORKDIR /app
 
