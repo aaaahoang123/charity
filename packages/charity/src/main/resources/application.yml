@@ -1,5 +1,3 @@
-keycloak-issuer: ${KEYCLOAK_URL:http://localhost:8081/realms/charity}
-
 server:
   port: ${PORT:8080}
   max-http-request-header-size: 512KB
@@ -43,7 +41,7 @@ com:
     springaddons:
       security:
         issuers:
-          - location: ${keycloak-issuer}
+          - location: ${KEYCLOAK_FRONTEND_URL:http://localhost:8181/realms/charity}
             username-claim: preferred_username
             authorities:
               - path: $.realm_access.roles
@@ -75,7 +73,7 @@ spring:
         opaquetoken:
           client-id: ${KEYCLOAK_CLIENT}
           client-secret: ${KEYCLOAK_SECRET}
-          introspection-uri: ${keycloak-issuer}/protocol/openid-connect/token/introspect
+          introspection-uri: ${KEYCLOAK_URL:http://localhost:8181/realms/charity}/protocol/openid-connect/token/introspect
   servlet:
     multipart:
       max-file-size: 20MB
