@@ -1,15 +1,20 @@
-# BUILD IMAGE
-FROM eclipse-temurin:17 as BUILD
+FROM eclipse-temurin:17-alpine as BUILD
+
+WORKDIR /app
+
+COPY .mvn/ ./.mvn
+COPY mvnw pom.xml ./
+
+RUN ./mvnw dependency:go-offline
 
 COPY . /app
-WORKDIR /app
 
 ENV TZ=Asia/Singapore
 
-RUN ./mvnw package -Dmaven.test.skip=true
+RUN ./mvnw package -Dmaven.test.skip=true && rm -rf ~/.m2/repository
 
 # Production image
-FROM eclipse-temurin:17-jre as PRODUCTION
+FROM eclipse-temurin:17-jre-alpine as PRODUCTION
 
 WORKDIR /app
 
