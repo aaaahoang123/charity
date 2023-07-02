@@ -176,7 +176,7 @@ const HomeRender = ({campaigns, pagination}: HomeRenderProps) => {
                 <SearchBox/>
             </Card>
             <Card title={<div className={'text-center'}>Những hoàn cảnh khó khăn</div>} className={'mt-3'}>
-                <div className={'grid gap-6 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 auto-rows-fr'}>
+                <div className={'grid gap-6 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 auto-rows-fr'}>
                     {campaigns?.map(c => <CampaignItem campaign={c} key={c.id} displayActions />)}
                 </div>
             </Card>
