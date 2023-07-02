@@ -7,7 +7,9 @@ const inter = Inter({subsets: ['latin']})
 
 const handler = Logger.createDefaultHandler();
 Logger.setHandler(handler);
-Logger.setLevel((Logger as any)[process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'DEBUG']);
+const logLevel = process.env.LOG_LEVEL ?? 'DEBUG';
+console.log(logLevel);
+Logger.setLevel((Logger as any)[logLevel]);
 
 export const metadata = {
     title: "Let's Charity",
