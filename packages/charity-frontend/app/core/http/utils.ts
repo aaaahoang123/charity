@@ -1,6 +1,11 @@
 import Axios, {AxiosHeaders, AxiosInstance} from "axios";
-import {API_URL} from "@/app/core/constant";
+import {API_URL, BACKEND_API_URL} from "@/app/core/constant";
 import Rest from "@/app/core/model/rest";
+import {isBrowser, isWebWorker} from 'browser-or-node';
+
+const baseURL = (isBrowser || isWebWorker)
+    ? API_URL
+    : BACKEND_API_URL;
 
 let components: AxiosInstance;
 export const getAxiosInstance = (token?: string) => {
@@ -19,7 +24,7 @@ export const getAxiosInstance = (token?: string) => {
         headers.set('Authorization', `Bearer ${token}`);
     }
     return components = Axios.create({
-        baseURL: API_URL,
+        baseURL,
         headers,
     });
 };
