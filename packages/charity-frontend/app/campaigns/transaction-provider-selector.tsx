@@ -1,6 +1,7 @@
 import {Radio, RadioGroupProps, Select, SelectProps} from "antd";
-import {DonationStatus, TransactionProvider} from "@/app/core/model/donation";
-import {forwardRef, useMemo} from "react";
+import {TransactionProvider} from "@/app/core/model/donation";
+import {forwardRef} from "react";
+import TransactionProviderLabel from "@/app/campaigns/transaction-provider-label";
 
 type RadioSelectorProps = {
     type?: 'radio'
@@ -12,16 +13,9 @@ type SelectSelectorProps = {
 
 export type TransactionProviderProps = RadioSelectorProps | SelectSelectorProps;
 
-const translate: any = {
-    [TransactionProvider.TRANSFER]: 'Chuyển khoản',
-    [TransactionProvider.PAYPAL]: 'Paypal',
-    [TransactionProvider.MOMO]: 'Momo',
-    [TransactionProvider.VN_PAY]: 'VnPay',
-};
-
 const options: any = Object.entries(TransactionProvider)
-    .map(([k, v]) => ({
-        label: translate[k] ?? k,
+    .map(([, v]) => ({
+        label: <TransactionProviderLabel provider={v} />,
         value: v,
     }));
 

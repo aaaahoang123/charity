@@ -13,6 +13,7 @@ import Donor from "@/app/core/model/donor";
 import Logger from "js-logger";
 import {useCallback, useMemo} from "react";
 import {useRouter, useParams} from 'next/navigation';
+import TransactionProviderLabel from "@/app/campaigns/transaction-provider-label";
 
 const logger = Logger.get('DonationsPage');
 
@@ -85,6 +86,12 @@ const columns: TableProps<Donation>['columns'] = [
         title: 'Số tiền',
         dataIndex: 'amountStr',
         key: 'amountStr',
+    },
+    {
+        title: 'Phương thức',
+        dataIndex: 'transactionProvider',
+        key: 'transactionProvider',
+        render: (provider) => <TransactionProviderLabel provider={provider} />
     },
     {
         title: 'Trạng thái',
