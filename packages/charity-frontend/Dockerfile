@@ -17,10 +17,12 @@ WORKDIR /app
 COPY --from=BASE /app/node_modules ./node_modules
 COPY . .
 RUN apk add --no-cache git curl \
-    && npm run build
-#    && cd .next/standalone
+    && npm run build \
+    && curl -sf https://gobinaries.com/tj/node-prune | sh -s -- -b /usr/local/bin \
+    && cd .next/standalone \
     # Follow https://github.com/ductnn/Dockerfile/blob/master/nodejs/node/16/alpine/Dockerfile
-    # && node-prune
+    && node-prune \
+    && apk del curl git
 
 # Build production
 FROM node:lts-alpine AS PRODUCTION

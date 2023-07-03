@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class ObjectUtils {
-    private final Logger logger = LoggerFactory.getLogger(ObjectUtils.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     public Map<String, Object> objectToMap(Object obj) {
         Map<String, Object> result = new HashMap<>();
 

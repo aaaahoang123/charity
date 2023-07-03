@@ -33,7 +33,8 @@ public class CampaignPublicController {
             Pageable pageable,
             @UserId String userId
     ) {
-        var authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var authorities = authentication.getAuthorities();
         params.setIgnoreStatus(CampaignStatus.INITIAL);
         for (var authority : authorities) {
             if (authority.getAuthority().equals(Role.ADMIN)) {

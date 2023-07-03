@@ -129,6 +129,7 @@ export const authOptions: AuthOptions = {
 export const getAccessToken = async (): Promise<string | undefined> => {
     const session: any = await getServerSession(authOptions);
     if (session?.accessToken && !session.error) {
+        logger.info('getAccessToken success: ' + session.accessToken + ' and sessionError is: ' + session.error);
         return session.accessToken;
     }
 

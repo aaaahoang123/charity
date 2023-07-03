@@ -10,6 +10,9 @@ dependencies:
   axios:
     specifier: ^1.4.0
     version: 1.4.0
+  browser-or-node:
+    specifier: ^2.1.1
+    version: 2.1.1
   dayjs:
     specifier: ^1.11.8
     version: 1.11.8
@@ -911,6 +914,10 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       fill-range: 7.0.1
+
+  /browser-or-node@2.1.1:
+    resolution: {integrity: sha512-8CVjaLJGuSKMVTxJ2DpBl5XnlNDiT4cQFeuCJJrvJmts9YrTZDizTX7PjC2s6W4x+MBGZeEY6dGMrF04/6Hgqg==}
+    dev: false
 
   /browserslist@4.21.8:
     resolution: {integrity: sha512-j+7xYe+v+q2Id9qbBeCI8WX5NmZSRe8es1+0xntD/+gaWXznP8tFEkv5IgSaHf5dS1YwVMbX/4W6m937mj+wQw==}
