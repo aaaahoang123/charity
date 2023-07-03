@@ -8,7 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 import validateMessages from './validateMessage.json';
 import {ClientServiceProvider} from "@/app/core/http/components";
-import {RE_FETCH_INTERVAL} from "@/app/api/auth/[...nextauth]/route";
 import Logger from "js-logger";
 
 const { Header, Content, Footer } = Layout;
@@ -57,7 +56,7 @@ const InnerLayoutRenderer = ({children}: PropsWithChildren) => {
 
 export default function InnerLayout({children}: any) {
     return (
-        <SessionProvider refetchInterval={RE_FETCH_INTERVAL} refetchOnWindowFocus={true}>
+        <SessionProvider refetchInterval={60} refetchOnWindowFocus={true}>
             <ConfigProvider
                 theme={{
                     token: {
