@@ -7,7 +7,6 @@ import {Role} from "@/app/core/role";
 import Logger from "js-logger";
 
 const logger = Logger.get('NextAuthRoute');
-logger.setLevel(Logger.DEBUG);
 
 export const RE_FETCH_INTERVAL = 70;
 

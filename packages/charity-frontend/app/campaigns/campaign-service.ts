@@ -16,8 +16,9 @@ class CampaignService extends BaseCRUDService<Campaign> {
     }
 
     triggerSubscribe(slug: string) {
-        return this.axios.get<Rest<Campaign>>(`/api/v1/campaigns/${slug}/subscribe`)
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.doFetch<Rest<Campaign>>(`/api/v1/campaigns/${slug}/subscribe`)
+        );
     }
 }
 

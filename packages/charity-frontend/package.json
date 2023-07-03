@@ -11,7 +11,6 @@
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "antd": "^5.6.1",
-    "axios": "^1.4.0",
     "browser-or-node": "^2.1.1",
     "dayjs": "^1.11.8",
     "easymde": "^2.18.0",

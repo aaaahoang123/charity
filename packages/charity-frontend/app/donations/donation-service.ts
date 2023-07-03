@@ -10,13 +10,18 @@ class DonationService extends BaseCRUDService<Donation> {
     }
 
     approve(id: number, transactionCode: string) {
-        return this.axios.post<Rest<Donation>>('/api/v1/donations/' + id + '/approve', {transactionCode})
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.doFetch<Rest<Donation>>('/api/v1/donations/' + id + '/approve', {
+                method: 'POST',
+                body: JSON.stringify({transactionCode})
+            })
+        );
     }
 
     reject(id: number) {
-        return this.axios.get<Rest<Donation>>('/api/v1/donations/' + id + '/reject')
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.doFetch<Rest<Donation>>('/api/v1/donations/' + id + '/reject')
+        );
     }
 
     protected getCreatePath(): string {
@@ -24,13 +29,15 @@ class DonationService extends BaseCRUDService<Donation> {
     }
 
     getPaymentInfo(id: number) {
-        return this.axios.get<Rest<PaymentInfo>>('/api/v1/public/donations/' + id + '/payment')
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.doFetch<Rest<PaymentInfo>>('/api/v1/public/donations/' + id + '/payment')
+        );
     }
 
     getDonors() {
-        return this.axios.get<Rest<Donor[]>>('/api/v1/donors')
-            .then(({data}) => data);
+        return this.waitForReady(
+            () => this.doFetch<Rest<Donor[]>>('/api/v1/donors')
+        );
     }
 }
 
