@@ -9,7 +9,7 @@ import Logger from "js-logger";
 const logger = Logger.get('NextAuthRoute');
 logger.setLevel(Logger.DEBUG);
 
-export const RE_FETCH_INTERVAL = 60;
+export const RE_FETCH_INTERVAL = 70;
 
 /**
  * Takes a token, and returns a new token with updated

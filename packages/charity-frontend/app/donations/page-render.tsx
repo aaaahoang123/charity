@@ -11,6 +11,8 @@ import DonationAction from "@/app/donations/donation-action";
 import DonationSearchBox from "@/app/donations/search-box";
 import Donor from "@/app/core/model/donor";
 import Logger from "js-logger";
+import {useCallback, useMemo} from "react";
+import {useRouter, useParams} from 'next/navigation';
 
 const logger = Logger.get('DonationsPage');
 
@@ -32,9 +34,9 @@ const columns: TableProps<Donation>['columns'] = [
         render: (campaign: Campaign) => {
             const popoverContent = (
                 <Space>
-                    <Avatar src={campaign.organization?.avatarUrl} icon={<UserOutlined />} />
+                    <Avatar src={campaign.organization?.avatarUrl} icon={<UserOutlined/>}/>
                     {campaign.organization?.name}
-                    <Divider type={'vertical'} />
+                    <Divider type={'vertical'}/>
                     <span className={'float-right'}>
                         {campaign.createdAt}
                     </span>
@@ -44,7 +46,7 @@ const columns: TableProps<Donation>['columns'] = [
             return (
                 <Popover content={popoverContent} title={campaign.title}>
                     <Link href={'/campaigns/' + campaign.slug}>
-                        <div className={'max-w-[30ch] whitespace-nowrap text-ellipsis overflow-hidden'} >
+                        <div className={'max-w-[30ch] whitespace-nowrap text-ellipsis overflow-hidden'}>
                             {campaign.title}
                         </div>
                     </Link>
@@ -60,17 +62,18 @@ const columns: TableProps<Donation>['columns'] = [
             return (
                 <>
                     <span>
-                        <UserOutlined /> {donor?.name ?? 'Giấu tên'}
+                        <UserOutlined/> {donor?.name ?? 'Giấu tên'}
                     </span>
-                    <Divider type={'vertical'} />
+                    <Divider type={'vertical'}/>
                     <span>
-                        <PhoneOutlined /> {
-                        donor?.phoneNumber?.length ? <a href={'tel:' + donor.phoneNumber}>{donor.phoneNumber}</a> : 'Chưa rõ'
+                        <PhoneOutlined/> {
+                        donor?.phoneNumber?.length ?
+                            <a href={'tel:' + donor.phoneNumber}>{donor.phoneNumber}</a> : 'Chưa rõ'
                     }
                     </span>
-                    <Divider type={'vertical'} />
+                    <Divider type={'vertical'}/>
                     <span>
-                        <MailOutlined /> {
+                        <MailOutlined/> {
                         donor?.email?.length ? <a href={'mailto:' + donor.email}>{donor.email}</a> : 'Chưa rõ'
                     }
                     </span>
@@ -87,7 +90,7 @@ const columns: TableProps<Donation>['columns'] = [
         title: 'Trạng thái',
         dataIndex: 'status',
         key: 'status',
-        render: (status: DonationStatus) => <DonationStatusTag status={status} />
+        render: (status: DonationStatus) => <DonationStatusTag status={status}/>
     },
     {
         title: 'Hành động',
@@ -95,19 +98,39 @@ const columns: TableProps<Donation>['columns'] = [
         key: 'id',
         render: (id, record) => {
             return record.status !== DonationStatus.REJECTED
-                && record.status !== DonationStatus.CONFIRMED
-                    ? <DonationAction donation={record} />
-                    : null;
+            && record.status !== DonationStatus.CONFIRMED
+                ? <DonationAction donation={record}/>
+                : null;
         },
     }
 ];
 
 const DonationPageRender = ({donations, pagination}: DonationPageRenderProps) => {
+    const router = useRouter();
+    const params = useParams();
+    const onChange = useCallback((page: number, size: number) => {
+        const newParams = {
+            ...params,
+            page: page - 1,
+            size,
+        }
+        router.push('?' + new URLSearchParams(newParams as any).toString());
+    }, [router, params]);
+
+    const paginationData = useMemo(() => ({
+        current: (pagination?.currentPage ?? 0) + 1,
+        pageSize: pagination?.size ?? 20,
+        total: pagination?.total,
+        onChange,
+        showSizeChanger: true,
+        showQuickJumper: true,
+    }), [onChange, pagination?.currentPage, pagination?.size, pagination?.total])
+
     logger.info(donations, pagination);
     return (
         <>
             <Card>
-                <DonationSearchBox />
+                <DonationSearchBox/>
             </Card>
             <Card title={'Danh sách giao dịch'}
                   className={'mt-2'}
@@ -115,6 +138,8 @@ const DonationPageRender = ({donations, pagination}: DonationPageRenderProps) =>
                 <Table dataSource={donations}
                        columns={columns}
                        rowKey={'id'}
+                       size={'small'}
+                       pagination={paginationData}
                 />
             </Card>
         </>
