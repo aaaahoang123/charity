@@ -9,8 +9,6 @@ RUN ./mvnw dependency:go-offline
 
 COPY . /app
 
-ENV TZ=Asia/Singapore
-
 RUN ./mvnw package -Dmaven.test.skip=true && rm -rf ~/.m2/repository
 
 # Production image
@@ -18,7 +16,9 @@ FROM eclipse-temurin:17-jre-alpine as PRODUCTION
 
 WORKDIR /app
 
-COPY --from=BUILD /app/target/*.jar main.jar
+ENV TZ=Asia/Singapore
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+COPY --from=BUILD /app/target/*.jar main.jar
 
 ENTRYPOINT java -XX:+UseSerialGC -jar main.jar
