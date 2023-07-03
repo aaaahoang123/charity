@@ -2,28 +2,25 @@ import Axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {API_URL, BACKEND_API_URL} from "@/app/core/constant";
 import Rest from "@/app/core/model/rest";
 import {isBrowser, isWebWorker} from 'browser-or-node';
+import Logger from "js-logger";
+
+const logger = Logger.get('HttpUtils');
 
 const baseURL = (isBrowser || isWebWorker)
     ? API_URL
     : BACKEND_API_URL;
 
-let components: AxiosInstance;
 export const getAxiosInstance = (token?: string) => {
-    if (components) {
-        if (token) {
-            components.defaults.headers.common.Authorization = `Bearer ${token}`;
-        } else {
-            delete components.defaults.headers.common.Authorization;
-        }
-        return components;
-    }
     const headers = new AxiosHeaders({
         Accept: 'application/json',
     });
     if (token) {
+        logger.info('Set token to axios instance when create. Token is: ' + token);
         headers.set('Authorization', `Bearer ${token}`);
+    } else {
+        logger.info('There are no jwt token, request as anonymous');
     }
-    return components = Axios.create({
+    return Axios.create({
         baseURL,
         headers,
     });
