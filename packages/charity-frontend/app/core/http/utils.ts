@@ -1,4 +1,3 @@
-import Axios, {AxiosHeaders, AxiosInstance} from "axios";
 import {API_URL, BACKEND_API_URL} from "@/app/core/constant";
 import Rest from "@/app/core/model/rest";
 import {isBrowser, isWebWorker} from 'browser-or-node';
@@ -10,24 +9,8 @@ const baseURL = (isBrowser || isWebWorker)
     ? API_URL
     : BACKEND_API_URL;
 
-export const getAxiosInstance = (token?: string) => {
-    const headers = new AxiosHeaders({
-        Accept: 'application/json',
-    });
-    if (token) {
-        logger.info('Set token to axios instance when create. Token is: ' + token);
-        headers.set('Authorization', `Bearer ${token}`);
-    } else {
-        logger.info('There are no jwt token, request as anonymous');
-    }
-    return Axios.create({
-        baseURL,
-        headers,
-    });
-};
-
 export interface CRUDService<T = any> {
-    setClient(client: AxiosInstance): void;
+    setToken(token?: string): void;
     setStatus(status: 'authenticated' | 'loading' | 'unauthenticated'): void;
     list(params: any): Promise<Rest<T[]>>;
     create(body: any): Promise<Rest<T>>;
@@ -38,7 +21,13 @@ export interface CRUDService<T = any> {
 
 export abstract class BaseCRUDService<T> implements CRUDService<T> {
     protected _status: 'authenticated' | 'loading' | 'unauthenticated' = 'loading';
-    constructor(protected axios: AxiosInstance) {
+    constructor(
+        protected token?: string,
+    ) {
+    }
+
+    setToken(token?: string) {
+        this.token = token;
     }
 
     public setStatus(status: 'authenticated' | 'loading' | 'unauthenticated') {
@@ -88,41 +77,62 @@ export abstract class BaseCRUDService<T> implements CRUDService<T> {
 
     create(body: any): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.post<Rest<T>>(this.getCreatePath(), body)
-                .then(({data}) => data)
-        );
+            () => this.doFetch<Rest<T>>(this.getCreatePath(), {
+                method: 'POST',
+                body: body ? JSON.stringify(body) : undefined,
+            })
+        )
     }
 
     delete(id: string | number): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.delete<Rest<T>>(this.getDeletePath(id))
-                .then(({data}) => data)
+            () => this.doFetch<Rest<T>>(this.getDeletePath(id), {
+                method: 'DELETE',
+            })
         );
     }
 
     detail(id: string | number): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.get<Rest<T>>(this.getDetailPath(id))
-                .then(({data}) => data)
+            () => this.doFetch<Rest<T>>(this.getDetailPath(id))
         );
     }
 
     list(params: any): Promise<Rest<T[]>> {
+        const searchParams = new URLSearchParams(params);
         return this.waitForReady(
-            () => this.axios.get<Rest<T[]>>(this.getListPath(), {
-                params,
-            }).then(({data}) => data)
+            () => this.doFetch<Rest<T[]>>(this.getListPath() + '?' + searchParams.toString())
         );
-    }
-
-    setClient(client: AxiosInstance): void {
-        this.axios = client;
     }
 
     update(id: string | number, body: any): Promise<Rest<T>> {
         return this.waitForReady(
-            () => this.axios.put<Rest<T>>(this.getUpdatePath(id), body)
-                .then(({data}) => data)
+            () => this.doFetch<Rest<T>>(this.getUpdatePath(id), {
+                method: 'PUT',
+                body: body ? JSON.stringify(body) : undefined,
+            })
         );
+    }
+
+    async doFetch<R>(url: string, init?: RequestInit): Promise<R> {
+        const options = init ?? {};
+        const headers = new Headers({
+            'Content-Type': 'application/json',
+            ...init?.headers ?? {},
+            Accept: 'application/json',
+            // Authorization: !!this.token?.length ? `Bearer ${this.token}` : undefined,
+        });
+        if (!!this.token?.length) {
+            headers.append('Authorization', `Bearer ${this.token}`);
+            logger.info('Use authorization to request');
+        }
+        options.headers = headers;
+        const response = await fetch(baseURL + url, options);
+        const json = await response.json();
+        if (!response.ok) {
+            throw new Error('Request failed with status: ' + response.status + '. Reason: ' + json);
+        }
+
+        return json;
     }
 }
