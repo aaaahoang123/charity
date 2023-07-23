@@ -26,7 +26,6 @@ function MarkDownEditor(props: SimpleMDEReactProps) {
                 fetch(API_URL + '/api/v1/storage', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'multipart/form-data',
                         Accept: 'application/json',
                         Authorization: `Bearer ${accessToken}`,
                     },
