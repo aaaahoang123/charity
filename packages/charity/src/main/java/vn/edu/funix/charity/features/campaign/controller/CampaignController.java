@@ -51,4 +51,12 @@ public class CampaignController {
     ) {
         return campaignService.triggerSubscribe(userId, slug);
     }
+
+    @GetMapping("/{slug}/trigger-send-mail")
+    public Campaign sendMail(
+            @PathVariable("slug") String slug,
+            @UserId String userId
+    ) {
+        return campaignService.triggerWillSendMail(userId, slug);
+    }
 }

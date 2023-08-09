@@ -184,8 +184,21 @@ public class CampaignServiceImpl implements CampaignService {
             var subscriber = new Subscriber();
             subscriber.setCampaign(campaign);
             subscriber.setUserId(userId);
+            subscriber.setWillSendMail(false);
             subscriberRepository.save(subscriber);
         }
+        return campaign;
+    }
+
+    @Override
+    public Campaign triggerWillSendMail(String userId, String slug) {
+        var campaign = detail(slug);
+        var subscribed = subscriberRepository
+                .findSubscriberByUserIdAndCampaignId(userId, campaign.getId())
+                .orElseThrow(() -> new BadRequestException("You must subscribe the campaign first"));
+
+        subscribed.setWillSendMail(!subscribed.getWillSendMail());
+        subscriberRepository.save(subscribed);
         return campaign;
     }
 

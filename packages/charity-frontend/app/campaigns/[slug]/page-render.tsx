@@ -16,6 +16,7 @@ import TimeDisplay from "@/app/common/component/time-display";
 import ClientNeedAuth from "@/app/common/component/need-auth/client-need-auth";
 import {Role} from "@/app/core/role";
 import SubscribeButton from "@/app/campaigns/[slug]/subscribe-button";
+import SendMailButton from "@/app/campaigns/[slug]/send-mail-button";
 
 export interface ServerQueryParams {
     success?: string;
@@ -131,6 +132,14 @@ const CampaignDetailRender = ({ campaign }: CampaignDetailRenderProps) => {
                         <h3 className={'mb-1'}>&nbsp;</h3>
                         <SubscribeButton campaign={campaign} size={'small'} />
                     </div>
+                    {
+                        campaign.isSubscribed
+                            ? <div className={'ml-3 float-left'}>
+                                <h3 className={'mb-1'}>&nbsp;</h3>
+                                <SendMailButton campaign={campaign} size={'small'} />
+                            </div>
+                            : null
+                    }
                 </ClientNeedAuth>
             </div>
             <div className={'clear-both'}></div>

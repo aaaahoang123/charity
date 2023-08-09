@@ -56,8 +56,10 @@ public class CampaignPublicController {
         if (userId != null) {
             var subscribed = campaignService.findSubscriberOfUserWithCampaigns(userId, List.of(campaign.getId()));
             if (!subscribed.isEmpty()) {
+                var subScribedData = subscribed.get(0);
                 var dto = new CampaignWithSubscribedDto(campaign);
                 dto.setSubscribed(true);
+                dto.setWillSendMail(subScribedData.getWillSendMail());
                 return dto;
             }
         }
