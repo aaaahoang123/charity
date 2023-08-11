@@ -28,6 +28,9 @@ public class Subscriber {
     @Column(nullable = false, length = 50)
     private String userId;
 
+    @Column
+    private String userEmail;
+
     @Column(nullable = false)
     private Boolean willSendMail;
 

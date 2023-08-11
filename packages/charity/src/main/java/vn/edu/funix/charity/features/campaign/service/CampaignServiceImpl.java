@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import vn.edu.funix.charity.entity.Subscriber;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
+import vn.edu.funix.charity.features.campaign.event.CampaignUpdated;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.campaign.repository.OrganizationRepository;
 import vn.edu.funix.charity.features.campaign.repository.SubscriberRepository;
@@ -41,6 +43,7 @@ public class CampaignServiceImpl implements CampaignService {
     private final CampaignRepository campaignRepository;
     private final OrganizationRepository organizationRepository;
     private final SubscriberRepository subscriberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Campaign create(String userId, CreateCampaignRequestDto dto) {
@@ -129,6 +132,8 @@ public class CampaignServiceImpl implements CampaignService {
             throw new BadRequestException("Đợt quyên góp đã đóng, không thể cập nhật thông tin");
         }
 
+        var oldStatus = campaign.getStatus();
+
         fillCampaignData(campaign, dto);
 
         if (!Objects.equals(campaign.getOrganizationId(), dto.getOrganizationId())) {
@@ -142,7 +147,13 @@ public class CampaignServiceImpl implements CampaignService {
             campaign.setStatus(dto.getStatus());
         }
 
-        return campaignRepository.save(campaign);
+        var result = campaignRepository.save(campaign);
+
+        var event = new CampaignUpdated(this, result, dto.getStatus() != null && oldStatus != dto.getStatus() ? dto.getStatus() : null);
+
+        eventPublisher.publishEvent(event);
+
+        return result;
     }
 
     private void fillCampaignData(Campaign campaign, CreateCampaignRequestDto dto) {
@@ -191,13 +202,14 @@ public class CampaignServiceImpl implements CampaignService {
     }
 
     @Override
-    public Campaign triggerWillSendMail(String userId, String slug) {
+    public Campaign triggerWillSendMail(String userId, String userEmail, String slug) {
         var campaign = detail(slug);
         var subscribed = subscriberRepository
                 .findSubscriberByUserIdAndCampaignId(userId, campaign.getId())
                 .orElseThrow(() -> new BadRequestException("You must subscribe the campaign first"));
 
         subscribed.setWillSendMail(!subscribed.getWillSendMail());
+        subscribed.setUserEmail(userEmail);
         subscriberRepository.save(subscribed);
         return campaign;
     }
@@ -205,5 +217,10 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public List<Subscriber> findSubscriberOfUserWithCampaigns(String userId, Collection<Integer> campaignIds) {
         return subscriberRepository.findAllByUserIdAndCampaignIdIn(userId, campaignIds);
+    }
+
+    @Override
+    public List<String> findAllSubscribedMailsOfCampaign(Campaign campaign) {
+        return subscriberRepository.findAllEmailByCampaignId(campaign.getId());
     }
 }

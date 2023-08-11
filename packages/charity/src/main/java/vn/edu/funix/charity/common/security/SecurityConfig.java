@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import vn.edu.funix.charity.common.security.annotation.UserEmailResolver;
 import vn.edu.funix.charity.common.security.annotation.UserIdResolver;
 import vn.edu.funix.charity.common.security.annotation.UsernameResolver;
 
@@ -23,5 +24,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addArgumentResolvers(resolvers);
         resolvers.add(new UserIdResolver());
         resolvers.add(new UsernameResolver());
+        resolvers.add(new UserEmailResolver());
     }
 }
