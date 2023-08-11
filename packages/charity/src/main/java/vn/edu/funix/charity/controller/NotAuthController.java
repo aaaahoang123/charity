@@ -2,6 +2,8 @@ package vn.edu.funix.charity.controller;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class NotAuthController {
     private CampaignRepository campaignRepository;
+    private JavaMailSender javaMailSender;
 
     @GetMapping
     @Secured(Role.NO_USER)
@@ -29,6 +32,13 @@ public class NotAuthController {
 
     @GetMapping("/test-path")
     public Map<String, Object> chan() {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@baeldung.com");
+        message.setTo("hoangdo.2194@yahoo.com");
+        message.setSubject("Test mail thoi ma");
+        message.setText("Day la mot email test");
+        javaMailSender.send(message);
+
         Map<String, Object> a = new HashMap<>();
 
         a.put("active", 1);

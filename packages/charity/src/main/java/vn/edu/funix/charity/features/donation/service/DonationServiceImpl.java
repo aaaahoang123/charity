@@ -2,6 +2,7 @@ package vn.edu.funix.charity.features.donation.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.entity.Donor;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 import vn.edu.funix.charity.entity.enumerate.DonationStatus;
+import vn.edu.funix.charity.features.campaign.event.CampaignUpdated;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.donation.dto.DonationDto;
 import vn.edu.funix.charity.features.donation.dto.ListDonationParam;
@@ -31,6 +33,7 @@ public class DonationServiceImpl implements DonationService {
     private DonationRepository donationRepository;
     private DonorRepository donorRepository;
     private CampaignRepository campaignRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Donation create(@Nullable String userId, DonationDto dto) {
@@ -109,8 +112,14 @@ public class DonationServiceImpl implements DonationService {
 
         var campaign = donation.getCampaign();
 
+        var totalReceivedAmount = campaign.getTotalReceivedAmount() + donation.getAmount();
         campaign.setTotalDonations(campaign.getTotalDonations() + 1);
-        campaign.setTotalReceivedAmount(campaign.getTotalReceivedAmount() + donation.getAmount());
+        campaign.setTotalReceivedAmount(totalReceivedAmount);
+
+        if (totalReceivedAmount >= campaign.getTargetAmount()) {
+            campaign.setStatus(CampaignStatus.COMPLETED);
+            eventPublisher.publishEvent(new CampaignUpdated(this, campaign, CampaignStatus.COMPLETED));
+        }
 
         campaignRepository.save(campaign);
 

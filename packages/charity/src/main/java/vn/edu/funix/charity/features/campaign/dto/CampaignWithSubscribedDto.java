@@ -11,6 +11,7 @@ public class CampaignWithSubscribedDto extends Campaign {
     private static ObjectUtils utils = new ObjectUtils();
 
     private boolean isSubscribed = false;
+    private boolean willSendMail = false;
 
     public CampaignWithSubscribedDto(Campaign campaign) {
         utils.assignObject(campaign, this);

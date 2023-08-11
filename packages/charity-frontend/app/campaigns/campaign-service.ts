@@ -20,6 +20,12 @@ class CampaignService extends BaseCRUDService<Campaign> {
             () => this.doFetch<Rest<Campaign>>(`/api/v1/campaigns/${slug}/subscribe`)
         );
     }
+
+    triggerSendMail(slug: string) {
+        return this.waitForReady(
+            () => this.doFetch<Rest<Campaign>>(`/api/v1/campaigns/${slug}/trigger-send-mail`)
+        );
+    }
 }
 
 export default CampaignService;

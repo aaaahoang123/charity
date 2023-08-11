@@ -23,5 +23,9 @@ public interface CampaignService {
 
     Campaign triggerSubscribe(String userId, String slug);
 
+    Campaign triggerWillSendMail(String userId, String userEmail, String slug);
+
     List<Subscriber> findSubscriberOfUserWithCampaigns(String userId, Collection<Integer> campaignIds);
+
+    List<String> findAllSubscribedMailsOfCampaign(Campaign campaign);
 }

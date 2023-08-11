@@ -31,6 +31,7 @@ interface Campaign {
     totalDonations: number;
     totalReceivedAmountStr: string;
     isSubscribed: boolean;
+    willSendMail?: boolean;
 }
 
 export default Campaign;

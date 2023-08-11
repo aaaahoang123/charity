@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.funix.charity.common.response.FormatWith;
 import vn.edu.funix.charity.common.security.Role;
+import vn.edu.funix.charity.common.security.annotation.UserEmail;
 import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
@@ -50,5 +51,14 @@ public class CampaignController {
             @UserId String userId
     ) {
         return campaignService.triggerSubscribe(userId, slug);
+    }
+
+    @GetMapping("/{slug}/trigger-send-mail")
+    public Campaign sendMail(
+            @PathVariable("slug") String slug,
+            @UserId String userId,
+            @UserEmail String userEmail
+    ) {
+        return campaignService.triggerWillSendMail(userId, userEmail, slug);
     }
 }
