@@ -20,6 +20,8 @@ import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.Organization;
 import vn.edu.funix.charity.entity.Subscriber;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
+import vn.edu.funix.charity.entity.enumerate.DonationStatus;
+import vn.edu.funix.charity.entity.virtual.DonationStatistic;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.event.CampaignUpdated;
@@ -27,6 +29,7 @@ import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.campaign.repository.OrganizationRepository;
 import vn.edu.funix.charity.features.campaign.repository.SubscriberRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.*;
+import vn.edu.funix.charity.features.donation.repository.DonationRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -43,6 +46,7 @@ public class CampaignServiceImpl implements CampaignService {
     private final CampaignRepository campaignRepository;
     private final OrganizationRepository organizationRepository;
     private final SubscriberRepository subscriberRepository;
+    private final DonationRepository donationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
@@ -222,5 +226,12 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     public List<String> findAllSubscribedMailsOfCampaign(Campaign campaign) {
         return subscriberRepository.findAllEmailByCampaignId(campaign.getId());
+    }
+
+    @Override
+    public List<DonationStatistic> getDonationStatisticOfCampaign(String slug) {
+        var campaign = detail(slug);
+
+        return donationRepository.statisticDonationByCampaignId(campaign.getId(), DonationStatus.CONFIRMED);
     }
 }

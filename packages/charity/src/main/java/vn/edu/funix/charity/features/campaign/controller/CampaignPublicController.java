@@ -13,6 +13,7 @@ import vn.edu.funix.charity.common.security.Role;
 import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
+import vn.edu.funix.charity.entity.virtual.DonationStatistic;
 import vn.edu.funix.charity.features.campaign.dto.CampaignWithSubscribedDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 import vn.edu.funix.charity.features.campaign.formatter.CampaignFormatter;
@@ -65,5 +66,12 @@ public class CampaignPublicController {
         }
 
         return campaign;
+    }
+
+    @GetMapping("/{slug}/donation-statistics")
+    public List<DonationStatistic> statistic(
+            @PathVariable("slug") String slug
+    ) {
+        return campaignService.getDonationStatisticOfCampaign(slug);
     }
 }

@@ -25,6 +25,7 @@ import vn.edu.funix.charity.features.donation.repository.DonationRepository;
 import vn.edu.funix.charity.features.donation.repository.DonorRepository;
 import vn.edu.funix.charity.features.donation.repository.spec.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Service
@@ -108,6 +109,7 @@ public class DonationServiceImpl implements DonationService {
     public Donation approve(Donation donation, String transactionId) {
         donation.setStatus(DonationStatus.CONFIRMED);
         donation.setTransactionCode(transactionId);
+        donation.setConfirmedAt(LocalDateTime.now());
         donationRepository.save(donation);
 
         var campaign = donation.getCampaign();
