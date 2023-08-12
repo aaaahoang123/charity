@@ -1,14 +1,19 @@
 package vn.edu.funix.charity.entity.virtual;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import vn.edu.funix.charity.common.util.CurrencyFormatter;
 
-import java.util.Date;
-
-@AllArgsConstructor
 @Getter
-public class DonationStatistic {
-    private Date date;
-    private Long totalAmount;
-    private Long countDonation;
+public class DonationStatistic implements CurrencyFormatter {
+    private final String date;
+    private final Long totalAmount;
+    private final Long countDonation;
+    private final String totalAmountStr;
+
+    public DonationStatistic(Object date, Long totalAmount, Long countDonation) {
+        this.date = date.toString();
+        this.totalAmount = totalAmount;
+        this.countDonation = countDonation;
+        this.totalAmountStr = this.formatCurrency(totalAmount);
+    }
 }

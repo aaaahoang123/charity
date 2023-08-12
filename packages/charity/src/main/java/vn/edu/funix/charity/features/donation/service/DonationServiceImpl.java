@@ -17,6 +17,8 @@ import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.entity.Donor;
 import vn.edu.funix.charity.entity.enumerate.CampaignStatus;
 import vn.edu.funix.charity.entity.enumerate.DonationStatus;
+import vn.edu.funix.charity.entity.virtual.DonationStatistic;
+import vn.edu.funix.charity.entity.virtual.TopDonor;
 import vn.edu.funix.charity.features.campaign.event.CampaignUpdated;
 import vn.edu.funix.charity.features.campaign.repository.CampaignRepository;
 import vn.edu.funix.charity.features.donation.dto.DonationDto;
@@ -27,6 +29,7 @@ import vn.edu.funix.charity.features.donation.repository.spec.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -165,5 +168,15 @@ public class DonationServiceImpl implements DonationService {
         );
 
         return donationRepository.findAll(spec, realPageable);
+    }
+
+    @Override
+    public List<DonationStatistic> statistics() {
+        return donationRepository.statisticDonationAll(DonationStatus.CONFIRMED);
+    }
+
+    @Override
+    public List<TopDonor> topDonors() {
+        return donationRepository.findTopDonors();
     }
 }

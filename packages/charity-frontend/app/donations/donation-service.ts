@@ -3,6 +3,7 @@ import Donation from "@/app/core/model/donation";
 import Rest from "@/app/core/model/rest";
 import PaymentInfo from "@/app/core/model/payment-info";
 import Donor from "@/app/core/model/donor";
+import {DonationStatistic} from "@/app/core/model/donation-statistic";
 
 class DonationService extends BaseCRUDService<Donation> {
     getApiPath(): string {
@@ -22,6 +23,12 @@ class DonationService extends BaseCRUDService<Donation> {
         return this.waitForReady(
             () => this.doFetch<Rest<Donation>>('/api/v1/donations/' + id + '/reject')
         );
+    }
+
+    statistics() {
+        return this.waitForReady(
+            () => this.doFetch<Rest<DonationStatistic[]>>('/api/v1/public/donations/statistics')
+        )
     }
 
     protected getCreatePath(): string {
