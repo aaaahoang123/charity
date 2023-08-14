@@ -20,6 +20,7 @@ import vn.edu.funix.charity.features.campaign.formatter.CampaignFormatter;
 import vn.edu.funix.charity.features.campaign.service.CampaignService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/public/campaigns")
@@ -73,5 +74,10 @@ public class CampaignPublicController {
             @PathVariable("slug") String slug
     ) {
         return campaignService.getDonationStatisticOfCampaign(slug);
+    }
+
+    @GetMapping("/statistics")
+    public Object statisticsAll() {
+        return campaignService.getCampaignStatistics();
     }
 }

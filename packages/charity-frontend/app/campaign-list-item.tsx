@@ -102,7 +102,7 @@ const CampaignItem = ({ campaign, displayActions, title }: CampaignItemProps) =>
                                                 : null
                                         }
                                         {
-                                            campaign.totalDonations === 0
+                                            campaign.status !== CampaignStatus.CLOSED
                                                 ?
                                                 <Button type={'default'} size={'small'}><Link
                                                     href={`/campaigns/${campaign.slug}/edit`}>Sửa</Link></Button>

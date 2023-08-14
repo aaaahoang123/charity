@@ -1,18 +1,9 @@
 'use client';
 
-import {
-    Button,
-    Card,
-    Col,
-    DatePicker,
-    Form,
-    Input,
-    message,
-    Row, Select,
-} from "antd";
+import {Button, Card, Col, DatePicker, Form, Input, message, Row,} from "antd";
 import 'easymde/dist/easymde.min.css';
 import FileUpload from "@/app/common/component/file-upload";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import OrganizationSelector from "@/app/campaigns/OrganizationSelector";
 import Organization from "@/app/core/model/organization";
 import {FormItemProps} from "antd/es/form/FormItem";
@@ -23,7 +14,7 @@ import {useService} from "@/app/core/http/components";
 import CampaignService from "@/app/campaigns/campaign-service";
 import {useRouter} from "next/navigation";
 import InputMoney from "@/app/common/component/input-money";
-import Campaign from "@/app/core/model/campaign";
+import Campaign, {CampaignStatus} from "@/app/core/model/campaign";
 import dayjs from "dayjs";
 import CampaignStatusSelector from "@/app/campaigns/campaign-status-selector";
 
@@ -33,6 +24,9 @@ export interface CampaignFormProps {
 
 const CampaignForm = ({ campaign }: CampaignFormProps) => {
     const [form] = Form.useForm();
+    const isDisabledAll = campaign?.status === CampaignStatus.CLOSED;
+    const isDisabledExceptStatus = isDisabledAll || campaign && campaign.totalDonations !== 0;
+
     const initialFormValues = useMemo(() => {
         if (!campaign) return undefined;
         const org = campaign.organization;
@@ -112,7 +106,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                                    name="title"
                                    rules={[{required: true}, {max: 255, type: 'string'}]}
                         >
-                            <Input placeholder={'Tiêu đề đợt quyên góp'}/>
+                            <Input placeholder={'Tiêu đề đợt quyên góp'} disabled={isDisabledExceptStatus} />
                         </Form.Item>
                         <Form.Item label="Mô tả"
                                    rules={[
@@ -121,7 +115,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                                    ]}
                                    name={'description'}
                         >
-                            <Input.TextArea placeholder={'Mô tả ngắn gọn'}/>
+                            <Input.TextArea placeholder={'Mô tả ngắn gọn'} disabled={isDisabledExceptStatus} />
                         </Form.Item>
                         <Form.Item label="Deadline"
                                    rules={[
@@ -132,6 +126,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                             <DatePicker picker={'date'}
                                         format={'DD/MM/YYYY'}
                                         placeholder={'Ngày kết thúc'}
+                                        disabled={isDisabledAll}
                             />
                         </Form.Item>
                         <Form.Item label="Mục tiêu"
@@ -143,6 +138,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                         >
                             <InputMoney placeholder={'Số tiền cần quyên góp'}
                                          className={'w-1/2 !important'}
+                                        disabled={isDisabledExceptStatus}
                             />
                         </Form.Item>
                         {
@@ -153,7 +149,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                                            ]}
                                            label={'Trạng thái'}
                                 >
-                                    <CampaignStatusSelector />
+                                    <CampaignStatusSelector disabled={isDisabledExceptStatus} />
                                 </Form.Item>
                             ) : null
                         }
@@ -166,6 +162,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                                 >
                                     <FileUpload multiple={true}
                                                 initialValues={form.getFieldValue('initialImages')}
+                                                disabled={isDisabledExceptStatus}
                                     />
                                 </Form.Item>
                             )}
@@ -178,7 +175,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                                    ]}
                                    name={'content'}
                         >
-                            <MarkDownEditor/>
+                            <MarkDownEditor disabled={isDisabledExceptStatus} />
                         </Form.Item>
                     </Card>
                 </Col>
@@ -197,7 +194,7 @@ const CampaignForm = ({ campaign }: CampaignFormProps) => {
                         >
                             {form => {
                                 // if (form.getFieldValue('organizationId')) {
-                                const isDisabled = !!form.getFieldValue('organizationId');
+                                const isDisabled = isDisabledExceptStatus || !!form.getFieldValue('organizationId');
                                 const commonRules: FormItemProps['rules'] | undefined = isDisabled ? undefined : [
                                     {required: true},
                                     {max: 255, type: 'string'}

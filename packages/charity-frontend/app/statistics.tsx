@@ -9,6 +9,7 @@ import {DonationStatistic} from "@/app/core/model/donation-statistic";
 import {Line} from "@ant-design/plots";
 import {TopDonor} from "@/app/core/model/top-donor";
 import {Table, TableProps} from "antd";
+import CampaignService from "@/app/campaigns/campaign-service";
 
 const {Statistic} = StatisticCard;
 
@@ -36,9 +37,11 @@ export default CC;
 function CC() {
     const [responsive, setResponsive] = useState(false);
     const donationService = useService(DonationService);
+    const campaignService = useService(CampaignService);
 
     const [donationData, setDonationData] = useState<DonationStatistic[]>([]);
     const [topDonors, setTopDonors] = useState<TopDonor[]>([]);
+    const [campaignStatistics, setCampaignStatistics] = useState<{total: number, running: number}>();
 
     const totalDonationAmount = useMemo(() => {
         let total = 0;
@@ -67,6 +70,11 @@ function CC() {
             .then((r) => setTopDonors(r.data));
     }, [donationService]);
 
+    useEffect(() => {
+        campaignService.statistics()
+            .then(r => setCampaignStatistics(r.data))
+    }, [campaignService]);
+
     return (
         <RcResizeObserver
             key="resize-observer"
@@ -85,7 +93,7 @@ function CC() {
                             <StatisticCard
                                 statistic={{
                                     title: 'Số đợt quyên góp',
-                                    value: 234,
+                                    value: campaignStatistics?.total,
                                     // description: (
                                     //     <Statistic
                                     //         title="较本月平均流量"
@@ -98,7 +106,7 @@ function CC() {
                             <StatisticCard
                                 statistic={{
                                     title: 'Số đợt đang chạy',
-                                    value: 234,
+                                    value: campaignStatistics?.running,
                                     // description: (
                                     //     <Statistic title="月同比" value="8.04%" trend="up"/>
                                     // ),
