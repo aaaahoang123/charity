@@ -25,6 +25,7 @@ import isNil from 'lodash/isNil';
 import omitBy from 'lodash/omitBy';
 import CampaignStatusSelector from "@/app/campaigns/campaign-status-selector";
 import CampaignItem from "@/app/campaign-list-item";
+import HomePageStatistics from "@/app/statistics";
 
 export interface HomeRenderProps {
     campaigns: Campaign[];
@@ -172,7 +173,8 @@ const PaginationRender = ({pagination}: HomeRenderProps) => {
 const HomeRender = ({campaigns, pagination}: HomeRenderProps) => {
     return (
         <>
-            <Card>
+            <HomePageStatistics />
+            <Card className={'mt-3'}>
                 <SearchBox/>
             </Card>
             <Card title={<div className={'text-center'}>Những hoàn cảnh khó khăn</div>} className={'mt-3'}>

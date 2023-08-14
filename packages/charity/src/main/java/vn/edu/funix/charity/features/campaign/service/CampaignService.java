@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import vn.edu.funix.charity.common.exception.BadRequestException;
 import vn.edu.funix.charity.entity.Campaign;
 import vn.edu.funix.charity.entity.Subscriber;
+import vn.edu.funix.charity.entity.virtual.DonationStatistic;
 import vn.edu.funix.charity.features.campaign.dto.CreateCampaignRequestDto;
 import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 
@@ -28,4 +29,6 @@ public interface CampaignService {
     List<Subscriber> findSubscriberOfUserWithCampaigns(String userId, Collection<Integer> campaignIds);
 
     List<String> findAllSubscribedMailsOfCampaign(Campaign campaign);
+
+    List<DonationStatistic> getDonationStatisticOfCampaign(String slug);
 }

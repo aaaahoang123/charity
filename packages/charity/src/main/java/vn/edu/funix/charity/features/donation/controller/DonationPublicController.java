@@ -13,12 +13,16 @@ import vn.edu.funix.charity.common.security.Role;
 import vn.edu.funix.charity.common.security.annotation.UserId;
 import vn.edu.funix.charity.entity.Donation;
 import vn.edu.funix.charity.entity.enumerate.TransactionProvider;
+import vn.edu.funix.charity.entity.virtual.DonationStatistic;
+import vn.edu.funix.charity.entity.virtual.TopDonor;
 import vn.edu.funix.charity.features.donation.dto.DonationDto;
 import vn.edu.funix.charity.features.donation.dto.ListDonationParam;
 import vn.edu.funix.charity.features.donation.formatter.DonationFormatter;
 import vn.edu.funix.charity.features.donation.service.DonationService;
 import vn.edu.funix.charity.features.payment.entity.PaymentInfo;
 import vn.edu.funix.charity.features.payment.service.PaymentManager;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/public/donations")
@@ -63,7 +67,7 @@ public class DonationPublicController {
         return donationService.getProcessingDonations(params, pageable);
     }
 
-    @GetMapping("{id}/payment")
+    @GetMapping("/{id}/payment")
     public PaymentInfo paymentInfo(
             @PathVariable("id") Long id,
             @Ip String ip
@@ -71,5 +75,15 @@ public class DonationPublicController {
         Donation donation = donationService.detail(id);
         donation.setRequesterIp(ip);
         return paymentManager.getPaymentInfo(donation);
+    }
+
+    @GetMapping("/statistics")
+    public List<DonationStatistic> statistics() {
+        return this.donationService.statistics();
+    }
+
+    @GetMapping("/top-donors")
+    public List<TopDonor> topDonors() {
+        return donationService.topDonors();
     }
 }
