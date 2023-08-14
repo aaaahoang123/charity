@@ -4,6 +4,7 @@ import Rest from "@/app/core/model/rest";
 import PaymentInfo from "@/app/core/model/payment-info";
 import Donor from "@/app/core/model/donor";
 import {DonationStatistic} from "@/app/core/model/donation-statistic";
+import {TopDonor} from "@/app/core/model/top-donor";
 
 class DonationService extends BaseCRUDService<Donation> {
     getApiPath(): string {
@@ -44,6 +45,12 @@ class DonationService extends BaseCRUDService<Donation> {
     getDonors() {
         return this.waitForReady(
             () => this.doFetch<Rest<Donor[]>>('/api/v1/donors')
+        );
+    }
+
+    findTopDonors() {
+        return this.waitForReady(
+            () => this.doFetch<Rest<TopDonor[]>>('/api/v1/public/donations/top-donors')
         );
     }
 }

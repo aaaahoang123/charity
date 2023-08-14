@@ -7,9 +7,30 @@ import {useService} from "@/app/core/http/components";
 import DonationService from "@/app/donations/donation-service";
 import {DonationStatistic} from "@/app/core/model/donation-statistic";
 import {Line} from "@ant-design/plots";
+import {TopDonor} from "@/app/core/model/top-donor";
+import {Table, TableProps} from "antd";
 
 const {Statistic} = StatisticCard;
 
+const topDonorColumns: TableProps<TopDonor>['columns'] = [
+    {
+        title: 'Tên',
+        key: 'name',
+        dataIndex: 'name',
+    },
+    {
+        title: 'Đã tham gia',
+        key: 'totalCampaign',
+        dataIndex: 'totalCampaign',
+        render: value => `${value} đợt quyên góp`
+    },
+    {
+        title: 'Đã quyên góp',
+        key: 'totalDonate',
+        dataIndex: 'totalDonate',
+        render: (value?: number) => `${value ?? ''}`?.replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+    }
+];
 
 export default CC;
 function CC() {
@@ -17,6 +38,7 @@ function CC() {
     const donationService = useService(DonationService);
 
     const [donationData, setDonationData] = useState<DonationStatistic[]>([]);
+    const [topDonors, setTopDonors] = useState<TopDonor[]>([]);
 
     const totalDonationAmount = useMemo(() => {
         let total = 0;
@@ -40,6 +62,11 @@ function CC() {
         })
     }, [setDonationData, donationService]);
 
+    useEffect(() => {
+        donationService.findTopDonors()
+            .then((r) => setTopDonors(r.data));
+    }, [donationService]);
+
     return (
         <RcResizeObserver
             key="resize-observer"
@@ -59,22 +86,22 @@ function CC() {
                                 statistic={{
                                     title: 'Số đợt quyên góp',
                                     value: 234,
-                                    description: (
-                                        <Statistic
-                                            title="较本月平均流量"
-                                            value="8.04%"
-                                            trend="down"
-                                        />
-                                    ),
+                                    // description: (
+                                    //     <Statistic
+                                    //         title="较本月平均流量"
+                                    //         value="8.04%"
+                                    //         trend="down"
+                                    //     />
+                                    // ),
                                 }}
                             />
                             <StatisticCard
                                 statistic={{
                                     title: 'Số đợt đang chạy',
                                     value: 234,
-                                    description: (
-                                        <Statistic title="月同比" value="8.04%" trend="up"/>
-                                    ),
+                                    // description: (
+                                    //     <Statistic title="月同比" value="8.04%" trend="up"/>
+                                    // ),
                                 }}
                             />
                         </ProCard>
@@ -96,7 +123,7 @@ function CC() {
                         </ProCard>
                     </ProCard>
                     <StatisticCard
-                        title="流量走势"
+                        title="Thống kê quyên góp"
                         chart={
                             <Line data={donationData}
                                   padding={"auto"}
@@ -109,12 +136,12 @@ function CC() {
                     />
                 </ProCard>
                 <StatisticCard
-                    title="流量占用情况"
+                    title="Top nhà hảo tâm"
                     chart={
-                        <img
-                            src="https://gw.alipayobjects.com/zos/alicdn/qoYmFMxWY/jieping2021-03-29%252520xiawu4.32.34.png"
-                            alt="大盘"
-                            width="100%"
+                        <Table columns={topDonorColumns}
+                               dataSource={topDonors}
+                               rowKey={'donorId'}
+                               pagination={false}
                         />
                     }
                 />
