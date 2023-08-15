@@ -11,8 +11,6 @@ import {TopDonor} from "@/app/core/model/top-donor";
 import {Table, TableProps} from "antd";
 import CampaignService from "@/app/campaigns/campaign-service";
 
-const {Statistic} = StatisticCard;
-
 const topDonorColumns: TableProps<TopDonor>['columns'] = [
     {
         title: 'Tên',
@@ -33,8 +31,8 @@ const topDonorColumns: TableProps<TopDonor>['columns'] = [
     }
 ];
 
-export default CC;
-function CC() {
+export default HomePageStatistics;
+function HomePageStatistics() {
     const [responsive, setResponsive] = useState(false);
     const donationService = useService(DonationService);
     const campaignService = useService(CampaignService);
@@ -136,7 +134,7 @@ function CC() {
                             <Line data={donationData}
                                   padding={"auto"}
                                   xField={'date'}
-                                  yField={'countDonation'}
+                                  yField={'totalAmount'}
                                   xAxis={{ tickCount: 1 }}
                                   smooth={true}
                             />
@@ -156,7 +154,7 @@ function CC() {
             </ProCard>
         </RcResizeObserver>
     );
-};
+}
 
 // import {Card, Col, Row} from "antd";
 // import {useService} from "@/app/core/http/components";
