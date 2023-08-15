@@ -137,7 +137,7 @@ public class PaypalPaymentService implements PaymentService {
     }
 
     // Refresh exchangeRate at midnight
-    @Scheduled(cron = "0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void refreshExchangeRate() {
         var restTemplate = new RestTemplate();
 

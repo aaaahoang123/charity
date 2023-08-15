@@ -245,7 +245,7 @@ public class CampaignServiceImpl implements CampaignService {
         );
     }
 
-    @Scheduled(cron = "0 1 * * *")
+    @Scheduled(cron = "0 0 1 * * *")
     public void updateStatusDaily() {
         logger.info("Scanning and update status for expired campaign");
         var campaigns = campaignRepository.findByStatusIsInAndDeadlineIsLessThan(List.of(CampaignStatus.OPENING, CampaignStatus.INITIAL), LocalDate.now());
