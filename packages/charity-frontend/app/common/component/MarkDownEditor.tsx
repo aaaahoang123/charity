@@ -10,15 +10,16 @@ import {API_URL} from "@/app/core/constant";
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {ssr: false});
 
 interface MarkDownEditorProps extends SimpleMDEReactProps {
-
+    disabled?: boolean;
 }
 
-function MarkDownEditor(props: SimpleMDEReactProps) {
+function MarkDownEditor({disabled, ...props}: MarkDownEditorProps) {
     const { data: session } = useSession();
     const accessToken = (session as any)?.accessToken;
 
     const options = useMemo<MarkDownEditorProps['options']>(() => {
         return {
+            disabled,
             uploadImage: true,
             imageUploadFunction(file, resolve, reject) {
                 const form = new FormData();
@@ -41,9 +42,10 @@ function MarkDownEditor(props: SimpleMDEReactProps) {
                     .catch(e => reject(e));
             }
         };
-    }, [accessToken]);
+    }, [accessToken, disabled]);
     return (
-        <SimpleMDE options={options} {...props} />
+        <SimpleMDE options={options}
+                   {...props} />
     );
 }
 

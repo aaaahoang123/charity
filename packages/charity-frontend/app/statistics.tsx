@@ -9,8 +9,7 @@ import {DonationStatistic} from "@/app/core/model/donation-statistic";
 import {Line} from "@ant-design/plots";
 import {TopDonor} from "@/app/core/model/top-donor";
 import {Table, TableProps} from "antd";
-
-const {Statistic} = StatisticCard;
+import CampaignService from "@/app/campaigns/campaign-service";
 
 const topDonorColumns: TableProps<TopDonor>['columns'] = [
     {
@@ -32,13 +31,15 @@ const topDonorColumns: TableProps<TopDonor>['columns'] = [
     }
 ];
 
-export default CC;
-function CC() {
+export default HomePageStatistics;
+function HomePageStatistics() {
     const [responsive, setResponsive] = useState(false);
     const donationService = useService(DonationService);
+    const campaignService = useService(CampaignService);
 
     const [donationData, setDonationData] = useState<DonationStatistic[]>([]);
     const [topDonors, setTopDonors] = useState<TopDonor[]>([]);
+    const [campaignStatistics, setCampaignStatistics] = useState<{total: number, running: number}>();
 
     const totalDonationAmount = useMemo(() => {
         let total = 0;
@@ -67,6 +68,11 @@ function CC() {
             .then((r) => setTopDonors(r.data));
     }, [donationService]);
 
+    useEffect(() => {
+        campaignService.statistics()
+            .then(r => setCampaignStatistics(r.data))
+    }, [campaignService]);
+
     return (
         <RcResizeObserver
             key="resize-observer"
@@ -85,7 +91,7 @@ function CC() {
                             <StatisticCard
                                 statistic={{
                                     title: 'Số đợt quyên góp',
-                                    value: 234,
+                                    value: campaignStatistics?.total,
                                     // description: (
                                     //     <Statistic
                                     //         title="较本月平均流量"
@@ -98,7 +104,7 @@ function CC() {
                             <StatisticCard
                                 statistic={{
                                     title: 'Số đợt đang chạy',
-                                    value: 234,
+                                    value: campaignStatistics?.running,
                                     // description: (
                                     //     <Statistic title="月同比" value="8.04%" trend="up"/>
                                     // ),
@@ -128,7 +134,7 @@ function CC() {
                             <Line data={donationData}
                                   padding={"auto"}
                                   xField={'date'}
-                                  yField={'countDonation'}
+                                  yField={'totalAmount'}
                                   xAxis={{ tickCount: 1 }}
                                   smooth={true}
                             />
@@ -148,7 +154,7 @@ function CC() {
             </ProCard>
         </RcResizeObserver>
     );
-};
+}
 
 // import {Card, Col, Row} from "antd";
 // import {useService} from "@/app/core/http/components";

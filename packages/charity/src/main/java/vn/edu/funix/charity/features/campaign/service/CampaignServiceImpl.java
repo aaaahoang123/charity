@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import vn.edu.funix.charity.common.exception.BadRequestException;
 import vn.edu.funix.charity.common.specification.FetchRelation;
@@ -31,11 +32,9 @@ import vn.edu.funix.charity.features.campaign.repository.SubscriberRepository;
 import vn.edu.funix.charity.features.campaign.repository.spec.*;
 import vn.edu.funix.charity.features.donation.repository.DonationRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -233,5 +232,28 @@ public class CampaignServiceImpl implements CampaignService {
         var campaign = detail(slug);
 
         return donationRepository.statisticDonationByCampaignId(campaign.getId(), DonationStatus.CONFIRMED);
+    }
+
+    @Override
+    public Map<String, Long> getCampaignStatistics() {
+        var runningCampaigns = campaignRepository.countRunningCampaign();
+        var totalCampaigns = campaignRepository.countTotalCampaign();
+
+        return Map.of(
+                "running", runningCampaigns,
+                "total", totalCampaigns
+        );
+    }
+
+    @Scheduled(cron = "0 1 * * *")
+    public void updateStatusDaily() {
+        logger.info("Scanning and update status for expired campaign");
+        var campaigns = campaignRepository.findByStatusIsInAndDeadlineIsLessThan(List.of(CampaignStatus.OPENING, CampaignStatus.INITIAL), LocalDate.now());
+
+        for (var campaign : campaigns) {
+            logger.debug("Update campaign: " + campaign.getId() + " to complete because it is expired of running times");
+            campaign.setStatus(CampaignStatus.COMPLETED);
+            campaignRepository.save(campaign);
+        }
     }
 }

@@ -11,6 +11,7 @@ import vn.edu.funix.charity.features.campaign.dto.ListCampaignParams;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface CampaignService {
     Campaign create(String userId, CreateCampaignRequestDto dto);
@@ -31,4 +32,6 @@ public interface CampaignService {
     List<String> findAllSubscribedMailsOfCampaign(Campaign campaign);
 
     List<DonationStatistic> getDonationStatisticOfCampaign(String slug);
+
+    Map<String, Long> getCampaignStatistics();
 }
