@@ -99,7 +99,7 @@ public class PaypalPaymentService implements PaymentService {
     @Override
     public String confirmPayment(Donation donation, Map<String, Object> meta) {
         String paymentId = (String) meta.get("paymentId");
-        String payerId = (String) meta.get("payerId");
+        String payerId = (String) meta.get("PayerID");
         Payment payment = new Payment();
         payment.setId(paymentId);
         PaymentExecution paymentExecute = new PaymentExecution();
