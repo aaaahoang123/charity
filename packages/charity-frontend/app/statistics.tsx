@@ -32,6 +32,7 @@ const topDonorColumns: TableProps<TopDonor>['columns'] = [
 ];
 
 export default HomePageStatistics;
+
 function HomePageStatistics() {
     const [responsive, setResponsive] = useState(false);
     const donationService = useService(DonationService);
@@ -39,7 +40,7 @@ function HomePageStatistics() {
 
     const [donationData, setDonationData] = useState<DonationStatistic[]>([]);
     const [topDonors, setTopDonors] = useState<TopDonor[]>([]);
-    const [campaignStatistics, setCampaignStatistics] = useState<{total: number, running: number}>();
+    const [campaignStatistics, setCampaignStatistics] = useState<{ total: number, running: number }>();
 
     const totalDonationAmount = useMemo(() => {
         let total = 0;
@@ -58,19 +59,20 @@ function HomePageStatistics() {
     }, [donationData]);
 
     useEffect(() => {
-        donationService.statistics().then((r) => {
-            setDonationData(r.data);
-        })
+        donationService?.statistics()
+            ?.then((r) => {
+                setDonationData(r.data);
+            })
     }, [setDonationData, donationService]);
 
     useEffect(() => {
-        donationService.findTopDonors()
-            .then((r) => setTopDonors(r.data));
+        donationService?.findTopDonors()
+            ?.then((r) => setTopDonors(r.data));
     }, [donationService]);
 
     useEffect(() => {
-        campaignService.statistics()
-            .then(r => setCampaignStatistics(r.data))
+        campaignService?.statistics()
+            ?.then(r => setCampaignStatistics(r.data))
     }, [campaignService]);
 
     return (
@@ -135,7 +137,7 @@ function HomePageStatistics() {
                                   padding={"auto"}
                                   xField={'date'}
                                   yField={'totalAmount'}
-                                  xAxis={{ tickCount: 1 }}
+                                  xAxis={{tickCount: 1}}
                                   smooth={true}
                             />
                         }
