@@ -15,6 +15,10 @@ class CampaignService extends BaseCRUDService<Campaign> {
         return this.getListPath() + `/${id}`;
     }
 
+    protected getUpdatePath(id: string | number): string {
+        return this.getApiPath() + `/${id}`;
+    }
+
     triggerSubscribe(slug: string) {
         return this.waitForReady(
             () => this.doFetch<Rest<Campaign>>(`/api/v1/campaigns/${slug}/subscribe`)
