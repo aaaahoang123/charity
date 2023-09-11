@@ -59,21 +59,21 @@ function HomePageStatistics() {
     }, [donationData]);
 
     useEffect(() => {
-        donationService?.statistics()
+        donationService?.statistics?.()
             ?.then((r) => {
                 setDonationData(r.data);
             })
     }, [setDonationData, donationService]);
 
     useEffect(() => {
-        donationService?.findTopDonors()
+        donationService?.findTopDonors?.()
             ?.then((r) => setTopDonors(r.data));
-    }, [donationService]);
+    }, [donationService, setTopDonors]);
 
     useEffect(() => {
-        campaignService?.statistics()
+        campaignService?.statistics?.()
             ?.then(r => setCampaignStatistics(r.data))
-    }, [campaignService]);
+    }, [campaignService, setCampaignStatistics]);
 
     return (
         <RcResizeObserver
